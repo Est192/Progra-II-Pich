@@ -9,6 +9,7 @@ using InvSis.Utilities;
 using InvSis.Model;
 using System.Data;
 using NpgsqlTypes;
+using InvSis.Views;
 
 namespace InvSis.Data
 {
@@ -125,7 +126,7 @@ namespace InvSis.Data
         /// </summary>
         /// <param name="idPermiso">ID del permiso a eliminar</param>
         /// <returns>True si la eliminación fue exitosa, False en caso contrario</returns>
-        public bool EliminarPermiso(int idPermiso)
+         public bool EliminarPermiso(int idPermiso)
         {
             try
             {
@@ -159,7 +160,6 @@ namespace InvSis.Data
             }
             finally
             {
-                // Asegura que se cierre la conexión
                 _dbAccess.Disconnect();
             }
         }
@@ -307,7 +307,6 @@ namespace InvSis.Data
             try
             {
                 string query = "SELECT id_permiso, descripcion, estatus FROM Permisos WHERE descripcion = @Descripcion";
-
                 var paramDescripcion = _dbAccess.CreateParameter("@Descripcion", descripcion);
 
                 _dbAccess.Connect();
@@ -315,7 +314,7 @@ namespace InvSis.Data
 
                 if (resultado.Rows.Count == 0)
                 {
-                    _logger.Info($"No se encontró ningún permiso con la descripción '{descripcion}'.");
+                    _logger.Info($"No se encontró ningún permiso con la descripción '{descripcion}'");
                     return null;
                 }
 
@@ -359,6 +358,73 @@ namespace InvSis.Data
             }
         }
 
+
+        
+
+        public bool EliminarPermisoPorNombre(string nombrePermiso)
+        {
+            try
+            {
+                string query = "UPDATE Permisos SET estatus = 2 WHERE descripcion = @Descripcion"; // Establece estatus 2 para inactivo
+
+                NpgsqlParameter paramNombre = _dbAccess.CreateParameter("@Descripcion", nombrePermiso);
+
+                _dbAccess.Connect();
+                int filas = _dbAccess.ExecuteNonQuery(query, paramNombre);
+
+                return filas > 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, $"Error al eliminar el permiso con nombre '{nombrePermiso}'");
+                return false;
+            }
+            finally
+            {
+                _dbAccess.Disconnect();
+            }
+        }
+
+
+        public bool EliminarPermisoPorDescripcion(string descripcion)
+        {
+            try
+            {
+                string query = "UPDATE Permisos SET estatus = 2 WHERE descripcion = @Descripcion"; // Establecer estatus a 2 (inactivo)
+
+                // Crea el parámetro para la descripción
+                NpgsqlParameter paramDescripcion = _dbAccess.CreateParameter("@Descripcion", descripcion);
+
+                // Establece la conexión a la BD
+                _dbAccess.Connect();
+
+                // Ejecuta la actualización
+                int filasAfectadas = _dbAccess.ExecuteNonQuery(query, paramDescripcion);
+
+                // Verifica si el permiso fue eliminado correctamente
+                bool exito = filasAfectadas > 0;
+                if (exito)
+                {
+                    _logger.Info($"Permiso con descripción '{descripcion}' eliminado correctamente.");
+                }
+                else
+                {
+                    _logger.Warn($"No se pudo eliminar el permiso con descripción '{descripcion}'. No se encontró el registro.");
+                }
+
+                return exito;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, $"Error al eliminar el permiso con descripción '{descripcion}'");
+                return false;
+            }
+            finally
+            {
+                // Asegura que se cierre la conexión
+                _dbAccess.Disconnect();
+            }
+        }
 
 
     }

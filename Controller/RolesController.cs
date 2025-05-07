@@ -1,192 +1,97 @@
-﻿
-using InvSis.Utilities;
-using NLog;
-using InvSis.Data;
-using InvSis.Model;
-
-namespace InvSis.Controller
+﻿namespace InvSis.Controllers
 {
+    using InvSis.Data;
+    using InvSis.Model;
+    using InvSis.Views;
+    using System;
+    using System.Collections.Generic;
+
     public class RolesController
     {
-        private static readonly Logger _Logger = LoggingManager.GetLogger("InvSis.Controller.RolesController");
-        private readonly RolesDataAccess _rolesData;
-        private readonly PermisosDataAccess _permisosData;
+        private readonly frmGestionRoles _view;
+        private readonly RolesDataAccess _dataAccess;
 
-        public RolesController()
+        // Constructor que recibe la vista y la capa de acceso a datos
+        public RolesController(frmGestionRoles view)
         {
-            _rolesData = new RolesDataAccess(); 
-            _permisosData = new PermisosDataAccess();
+            _view = view;
+            _dataAccess = new RolesDataAccess();
         }
 
-        public List<Permiso> ObtenerPermisos(bool soloActivos = true)
+        // Método para cargar todos los roles en el ComboBox de la vista
+        public void LoadRolesForComboBox()
         {
-            try
-            {
-                return _permisosData.ObtenerTodosLosPermisos(soloActivos);
-            }
-            catch (Exception ex)
-            {
-                _Logger.Error(ex, "Error al obtener permisos");
-                return new List<Permiso>();
-            }
+            List<Rol> roles = _dataAccess.ObtenerTodosLosRoles();
+            _view.PopulateRolesComboBox(roles); // Método que debe estar en la vista
         }
 
-        public Permiso? ObtenerPermisoPorId(int idPermiso)
+        // Método para cargar todos los permisos en el ComboBox de la vista
+        public void LoadPermissionsForComboBox()
         {
-            try
-            {
-                return _permisosData.ObtenerPermisoPorId(idPermiso);
-            }
-            catch (Exception ex)
-            {
-                _Logger.Error(ex, $"Error al obtener el permiso con ID {idPermiso}");
-                return null;
-            }
+            List<Permiso> permisos = _dataAccess.ObtenerPermisosDeRol(0); // Obtener todos los permisos (puedes modificar el ID del rol)
+            _view.PopulatePermissionsComboBox(permisos); // Método que debe estar en la vista
         }
 
-        public bool GuardarPermiso(Permiso permiso)
+        // Método para agregar un nuevo rol
+        public void AddRole(string nombreRol, string estatus)
         {
-            try
+            var rol = new Rol
             {
-                if (permiso.IdPermiso == 0)
-                {
-                    // Insertar nuevo permiso
-                    return _permisosData.InsertarPermiso(permiso) > 0;
-                }
-                else
-                {
-                    // Actualizar permiso existente
-                    return _permisosData.ActualizarPermiso(permiso);
-                }
+                NombreRol = nombreRol,
+                Estatus = estatus == "Activo" ? 1 : 2 // Mapea "Activo" a 1 y "Inactivo" a 2
+            };
+
+            int idGenerado = _dataAccess.InsertarRol(rol);
+            if (idGenerado > 0)
+            {
+                _view.ShowMessage("Rol agregado exitosamente.");
             }
-            catch (Exception ex)
+            else
             {
-                _Logger.Error(ex, "Error al guardar el permiso");
-                return false;
+                _view.ShowMessage("Error al agregar el rol.");
             }
         }
 
-        public bool EliminarPermiso(int idPermiso)
+        // Método para eliminar un rol (cambiar el estatus a inactivo)
+        public void DeleteRole(int idRol)
         {
-            try
+            bool exito = _dataAccess.EliminarRol(idRol);
+            if (exito)
             {
-                return _permisosData.EliminarPermiso(idPermiso);
+                _view.ShowMessage("Rol desactivado exitosamente.");
             }
-            catch (Exception ex)
+            else
             {
-                _Logger.Error(ex, $"Error al eliminar el permiso con ID {idPermiso}");
-                return false;
+                _view.ShowMessage("Error al desactivar el rol.");
             }
         }
 
-        public bool ExistePermiso(string descripcion)
+        // Método para asignar un permiso a un rol
+        public void AssignPermissionToRole(int idRol, int idPermiso)
         {
-            try
+            bool exito = _dataAccess.AsignarPermisoARol(idRol, idPermiso);
+            if (exito)
             {
-                return _permisosData.ExistePermisoPorDescripcion(descripcion);
+                _view.ShowMessage("Permiso asignado correctamente.");
             }
-            catch (Exception ex)
+            else
             {
-                _Logger.Error(ex, $"Error al verificar existencia de permiso con descripción: {descripcion}");
-                return false;
+                _view.ShowMessage("Error al asignar el permiso.");
             }
         }
 
-        public bool AsignarPermisoARol(int idRol, int idPermiso)
+        // Método para remover un permiso de un rol
+        public void RemovePermissionFromRole(int idRol, int idPermiso)
         {
-            try
+            bool exito = _dataAccess.RemoverPermisoDeRol(idRol, idPermiso);
+            if (exito)
             {
-                return _rolesData.AsignarPermisoARol(idRol, idPermiso);
+                _view.ShowMessage("Permiso removido correctamente.");
             }
-            catch (Exception ex)
+            else
             {
-                _Logger.Error(ex, "Error al asignar permiso al rol.");
-                return false;
+                _view.ShowMessage("Error al remover el permiso.");
             }
         }
-
-
-        public List<Rol> ObtenerTodosLosRoles(bool soloActivos = true)
-        {
-            try
-            {
-                return _rolesData.ObtenerTodosLosRoles(soloActivos);
-            }
-            catch (Exception ex)
-            {
-                _Logger.Error(ex, "Error al obtener los roles");
-                return new List<Rol>();
-            }
-        }
-
-        public Rol? ObtenerRolPorId(int idRol)
-        {
-            try
-            {
-                return _rolesData.ObtenerRolPorId(idRol);
-            }
-            catch (Exception ex)
-            {
-                _Logger.Error(ex, $"Error al obtener el rol con ID {idRol}");
-                return null;
-            }
-        }
-
-        public bool GuardarRol(Rol rol)
-        {
-            try
-            {
-                if (rol.IdRol == 0)
-                {
-                    return _rolesData.InsertarRol(rol) > 0;
-                }
-                else
-                {
-                    return _rolesData.ActualizarRol(rol);
-                }
-            }
-            catch (Exception ex)
-            {
-                _Logger.Error(ex, "Error al guardar el rol");
-                return false;
-            }
-        }
-
-        public bool EliminarRol(int idRol)
-        {
-            try
-            {
-                return _rolesData.EliminarRol(idRol);
-            }
-            catch (Exception ex)
-            {
-                _Logger.Error(ex, $"Error al eliminar el rol con ID {idRol}");
-                return false;
-            }
-        }
-
-        public bool ExisteRol(string nombre)
-        {
-            try
-            {
-                return _rolesData.ExisteNombreRol(nombre);
-            }
-            catch (Exception ex)
-            {
-                _Logger.Error(ex, $"Error al verificar existencia del rol con nombre '{nombre}'");
-                return false;
-            }
-        }
-        public List<Permiso> ObtenerPermisosDeRol(int idRol)
-        {
-            return _rolesData.ObtenerPermisosDeRol(idRol);
-        }
-
-        public bool RemoverPermisoDeRol(int idRol, int idPermiso)
-        {
-            return _rolesData.RemoverPermisoDeRol(idRol, idPermiso);
-        }
-
     }
 }
-

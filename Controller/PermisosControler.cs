@@ -1,116 +1,131 @@
-﻿using System;
-using System.Collections.Generic;
-using InvSis.Utilities;
-using NLog;
-using InvSis.Data;
-using InvSis.Model;
-
-namespace InvSis.Controller
+﻿namespace InvSis.Controllers
 {
+    using InvSis.Data;
+    using InvSis.Model;
+    using InvSis.Views;
+    using System;
+    using System.Collections.Generic;
+
     public class PermisosController
     {
-        private static readonly Logger _Logger = LoggingManager.GetLogger("InvSis.Controller.RolesController");
-        private readonly RolesDataAccess _rolesData;
-        private readonly PermisosDataAccess _permisosData;
+        private readonly frmGestrionPermisos _view;
+        private readonly PermisosDataAccess _dataAccess;
+         private readonly PermisosDataAccess _permisosDataAccess;  // Instancia de PermisosDataAccess
 
-        public  PermisosController()
+        public PermisosController(frmGestrionPermisos view)
         {
-            _permisosData = new PermisosDataAccess();
+            _view = view;
+            _dataAccess = new PermisosDataAccess();
         }
 
-        public List<Permiso> ObtenerPermisos(bool soloActivos = true)
+        // Cargar permisos en el ComboBox para eliminar
+        public void LoadPermissionsForDeletionComboBox()
         {
-            try
-            {
-                return _permisosData.ObtenerTodosLosPermisos(soloActivos);
-            }
-            catch (Exception ex)
-            {
-                _Logger.Error(ex, "Error al obtener permisos");
-                return new List<Permiso>();
-            }
+            List<Permiso> permisos = _dataAccess.ObtenerTodosLosPermisos();
+            _view.PopulatePermissionComboBox(permisos); // Llamamos a un método en la vista
         }
 
-        public List<Permiso> ObtenerTodosPermisos(bool soloActivos = true)
+        // Agregar un permiso
+        public void AddPermission(string nombrePermiso, string estatus)
         {
-            try
+            var permiso = new Permiso
             {
-                return _permisosData.ObtenerTodosLosPermisos();
-            }
-            catch (Exception ex)
-            {
-                _Logger.Error(ex, "Error al obtener permisos");
-                return new List<Permiso>();
-            }
-        }
+                Descripcion = nombrePermiso, // Usar Descripcion en lugar de NombrePermiso
+                Estatus = estatus == "Activo" ? 1 : 2
+            };
 
-        public Permiso? ObtenerPermisoPorId(int idPermiso)
-        {
-            try
+            int idGenerado = _dataAccess.InsertarPermiso(permiso);
+            if (idGenerado > 0)
             {
-                return _permisosData.ObtenerPermisoPorId(idPermiso);
+                _view.ShowMessage("Permiso agregado exitosamente.");
             }
-            catch (Exception ex)
+            else
             {
-                _Logger.Error(ex, $"Error al obtener el permiso con ID {idPermiso}");
-                return null;
+                _view.ShowMessage("Error al agregar el permiso.");
             }
         }
 
-        public bool GuardarPermiso(Permiso permiso)
+
+        // Eliminar un permiso
+        public void DeletePermission(int idPermiso)
         {
-            try
+            bool exito = _dataAccess.EliminarPermiso(idPermiso);
+            if (exito)
             {
-                if (permiso.IdPermiso == 0)
+                _view.ShowMessage("Permiso desactivado exitosamente.");
+            }
+            else
+            {
+                _view.ShowMessage("Error al desactivar el permiso.");
+            }
+        }
+
+        // Obtener un permiso por su descripción
+        public Permiso? GetPermissionByDescription(string descripcion)
+        {
+            // Aquí realizamos la búsqueda por descripción
+            return _permisosDataAccess.ObtenerPermisoPorDescripcion(descripcion);  // Método de acceso a datos que retorna un objeto Permiso
+        }
+
+        public void UpdatePermission(string nombrePermiso, string estatus)
+        {
+            // Verifica si el permiso existe en la base de datos
+            var permisoExistente = _permisosDataAccess.ObtenerPermisoPorDescripcion(nombrePermiso);
+
+            if (permisoExistente != null)
+            {
+                // Si el permiso existe, se crea un objeto Permiso con el nuevo estatus
+                permisoExistente.Estatus = estatus == "Activo" ? 1 : 2; // Asumiendo 1 para activo y 2 para inactivo
+
+                // Llamar al método de acceso a datos para actualizar el permiso
+                bool exito = _permisosDataAccess.ActualizarPermiso(permisoExistente);
+
+                // Notificar si la actualización fue exitosa
+                if (exito)
                 {
-                    // Obtener el último ID e incrementarlo
-                    int ultimoId = _permisosData.ObtenerUltimoIdPermiso();
-                    permiso.IdPermiso = ultimoId + 1;
-
-                    return _permisosData.InsertarPermiso(permiso) > 0;
+                    MessageBox.Show("Permiso editado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    return _permisosData.ActualizarPermiso(permiso);
+                    MessageBox.Show("No se pudo editar el permiso.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                _Logger.Error(ex, "Error al guardar el permiso");
-                return false;
+                // Si el permiso no existe
+                MessageBox.Show("El permiso no existe en la base de datos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        public bool EliminarPermiso(int idPermiso)
+        public List<Permiso> GetActivePermissions()
         {
-            try
-            {
-                return _permisosData.EliminarPermiso(idPermiso);
-            }
-            catch (Exception ex)
-            {
-                _Logger.Error(ex, $"Error al eliminar el permiso con ID {idPermiso}");
-                return false;
-            }
+            return _permisosDataAccess.ObtenerTodosLosPermisos(true);  // Solo obtener los permisos activos
         }
 
-        public bool ExistePermiso(string descripcion)
+        public bool DeletePermissionByDescription(string descripcion)
         {
-            try
+            // Llamamos al método en el DataAccess para eliminar el permiso
+            bool permisoEliminado = _permisosDataAccess.EliminarPermisoPorDescripcion(descripcion);
+
+            if (permisoEliminado)
             {
-                return _permisosData.ExistePermisoPorDescripcion(descripcion);
+                // Si la eliminación fue exitosa, actualizamos el ComboBox
+                
+                MessageBox.Show("Permiso eliminado correctamente", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            catch (Exception ex)
+            else
             {
-                _Logger.Error(ex, $"Error al verificar existencia de permiso con descripción: {descripcion}");
-                return false;
+                // Si no se pudo eliminar, mostramos un mensaje de error
+                MessageBox.Show("No se pudo eliminar el permiso. Intenta nuevamente.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            return permisoEliminado;
         }
 
-        public Permiso? ObtenerPermisoPorDescripcion(string descripcion)
-        {
-            return _permisosData.ObtenerPermisoPorDescripcion(descripcion);
-        }
+        
+
+
+
+
     }
 }
-
