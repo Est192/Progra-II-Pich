@@ -11,7 +11,7 @@ using InvSis.Business;
 
 namespace InvSis.Views
 {
-    public partial class frmMDI: Form
+    public partial class frmMDI : Form
     {
         private Dictionary<string, Form> openForms = new Dictionary<string, Form>();
         public frmMDI()
@@ -31,7 +31,7 @@ namespace InvSis.Views
 
         private void btnGesRoles_Click(object sender, EventArgs e)
         {
-            OpenFormInPanel("frmGestionRolesPermisos");
+            OpenFormInPanel("frmGestionRoles");
         }
 
         private void btnAdmUsr_Click(object sender, EventArgs e)
@@ -51,7 +51,12 @@ namespace InvSis.Views
 
         private void btnRepInv_Click(object sender, EventArgs e)
         {
-            OpenFormInPanel("frmReporteProductos");
+            OpenFormInPanel("frmRepInv");
+        }
+
+        private void btnGestionarPermisos_Click(object sender, EventArgs e)
+        {
+            OpenFormInPanel("frmGestrionPermisos");
         }
 
         // En el formulario principal, después de iniciar sesión:
@@ -112,8 +117,10 @@ namespace InvSis.Views
             {
                 case "frmAdminProd":
                     return new frmAdminProd();
-                case "frmGestionRolesPermisos":
-                    return new frmGestionRolesPermisos();
+                case "frmGestionRoles":
+                    return new frmGestionRoles();
+                case "frmGestrionPermisos":
+                    return new frmGestrionPermisos();
                 case "frmVReportesAuditoria":
                     return new frmVReportesAuditoria();
                 case "frmUsuarios":
@@ -122,8 +129,8 @@ namespace InvSis.Views
                     return new frmRepAPI();
                 case "frmRegMov":
                     return new frmRegMov();
-                case "frmReporteProductos":
-                    return new frmReporteProductos();
+                case "frmRepInv":
+                    return new frmRepInv();
                 default:
                     MessageBox.Show($"No se reconoce el formulario: {formName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return null;
@@ -174,5 +181,7 @@ namespace InvSis.Views
                 }
             }
         }
+
+        
     }
 }
