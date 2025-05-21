@@ -393,7 +393,7 @@ namespace InvSis.Views
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(230, 242, 248);
-            ClientSize = new Size(1347, 630);
+            ClientSize = new Size(1347, 722);
             Controls.Add(splitContainer1);
             Controls.Add(lblTitulo);
             ForeColor = SystemColors.Desktop;
