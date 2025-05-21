@@ -16,6 +16,10 @@ namespace InvSis.Model
         /// <summary>
         /// Descripción del permiso
         /// </summary>
+
+        // Propiedad adicional para el nombre del permiso
+        public string Nombre { get; set; }
+
         public string Descripcion { get; set; }
 
         /// <summary>
@@ -35,8 +39,9 @@ namespace InvSis.Model
         /// <summary>
         /// Constructor con datos básicos
         /// </summary>
-        public Permiso(string descripcion)
+        public Permiso(string nombre, string descripcion)
         {
+            Nombre = nombre;
             Descripcion = descripcion;
             Estatus = 1; // Activo por defecto
         }
@@ -44,9 +49,10 @@ namespace InvSis.Model
         /// <summary>
         /// Constructor completo
         /// </summary>
-        public Permiso(int idPermiso, string descripcion, int estatus)
+        public Permiso(int idPermiso, string nombre, string descripcion, int estatus)
         {
             IdPermiso = idPermiso;
+            Nombre = nombre;
             Descripcion = descripcion;
             Estatus = estatus;
         }

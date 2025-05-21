@@ -40,11 +40,12 @@ namespace InvSis.Data
         {
             try
             {
-                string query = "INSERT INTO Permisos (descripcion, estatus) " +
-                              "VALUES (@Descripcion, @Estatus) " +
+                string query = "INSERT INTO Permisos (nombre, descripcion, estatus) " +
+                              "VALUES (@Nombre, @Descripcion, @Estatus) " +
                               "RETURNING id_permiso";
 
                 // Crea parámetros para la consulta
+                NpgsqlParameter paramNombre = _dbAccess.CreateParameter("@Nombre", permiso.Nombre);
                 NpgsqlParameter paramDescripcion = _dbAccess.CreateParameter("@Descripcion", permiso.Descripcion);
                 NpgsqlParameter paramEstatus = _dbAccess.CreateParameter("@Estatus", permiso.Estatus);
 
@@ -52,7 +53,7 @@ namespace InvSis.Data
                 _dbAccess.Connect();
 
                 // Ejecuta la inserción y obtiene el ID generado
-                object? resultado = _dbAccess.ExecuteScalar(query, paramDescripcion, paramEstatus);
+                object? resultado = _dbAccess.ExecuteScalar(query, paramNombre, paramDescripcion, paramEstatus);
 
                 // Convierte el resultado a entero
                 int idGenerado = Convert.ToInt32(resultado);
@@ -62,7 +63,7 @@ namespace InvSis.Data
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"Error al insertar el permiso {permiso.Descripcion}");
+                _logger.Error(ex, $"Error al insertar el permiso {permiso.Nombre}");
                 return -1;
             }
             finally
@@ -82,12 +83,14 @@ namespace InvSis.Data
             try
             {
                 string query = "UPDATE Permisos " +
-                              "SET descripcion = @Descripcion, " +
+                              "SET nombre = @Nombre, " +
+                              "    descripcion = @Descripcion, " +
                               "    estatus = @Estatus " +
                               "WHERE id_permiso = @IdPermiso";
 
                 // Crea los parámetros
                 NpgsqlParameter paramId = _dbAccess.CreateParameter("@IdPermiso", permiso.IdPermiso);
+                NpgsqlParameter paramNombre = _dbAccess.CreateParameter("@Nombre", permiso.Nombre);
                 NpgsqlParameter paramDescripcion = _dbAccess.CreateParameter("@Descripcion", permiso.Descripcion);
                 NpgsqlParameter paramEstatus = _dbAccess.CreateParameter("@Estatus", permiso.Estatus);
 
@@ -95,7 +98,7 @@ namespace InvSis.Data
                 _dbAccess.Connect();
 
                 // Ejecuta la actualización
-                int filasAfectadas = _dbAccess.ExecuteNonQuery(query, paramId, paramDescripcion, paramEstatus);
+                int filasAfectadas = _dbAccess.ExecuteNonQuery(query, paramId, paramNombre, paramDescripcion, paramEstatus);
 
                 bool exito = filasAfectadas > 0;
                 if (exito)
@@ -126,7 +129,7 @@ namespace InvSis.Data
         /// </summary>
         /// <param name="idPermiso">ID del permiso a eliminar</param>
         /// <returns>True si la eliminación fue exitosa, False en caso contrario</returns>
-         public bool EliminarPermiso(int idPermiso)
+        public bool EliminarPermiso(int idPermiso)
         {
             try
             {
@@ -173,7 +176,7 @@ namespace InvSis.Data
         {
             try
             {
-                string query = "SELECT id_permiso, descripcion, estatus FROM Permisos WHERE id_permiso = @IdPermiso";
+                string query = "SELECT id_permiso, nombre, descripcion, estatus FROM Permisos WHERE id_permiso = @IdPermiso";
 
                 // Crea el parámetro
                 NpgsqlParameter paramId = _dbAccess.CreateParameter("@IdPermiso", idPermiso);
@@ -196,6 +199,7 @@ namespace InvSis.Data
                 // Crea el objeto Permiso
                 Permiso permiso = new Permiso(
                     Convert.ToInt32(row["id_permiso"]),
+                    row["nombre"].ToString() ?? "",
                     row["descripcion"].ToString() ?? "",
                     Convert.ToInt32(row["estatus"])
                 );
@@ -225,7 +229,7 @@ namespace InvSis.Data
 
             try
             {
-                string query = "SELECT id_permiso, descripcion, estatus FROM Permisos";
+                string query = "SELECT id_permiso, nombre, descripcion, estatus FROM Permisos";
 
                 if (soloActivos)
                 {
@@ -243,6 +247,7 @@ namespace InvSis.Data
                 {
                     Permiso permiso = new Permiso(
                         Convert.ToInt32(row["id_permiso"]),
+                        row["nombre"].ToString() ?? "",
                         row["descripcion"].ToString() ?? "",
                         Convert.ToInt32(row["estatus"])
                     );
@@ -302,11 +307,48 @@ namespace InvSis.Data
             }
         }
 
+        /// <summary>
+        /// Verifica si existe un permiso con el nombre proporcionado
+        /// </summary>
+        /// <param name="nombre">Nombre a verificar</param>
+        /// <returns>True si existe, False si no existe</returns>
+        public bool ExistePermisoPorNombre(string nombre)
+        {
+            try
+            {
+                string query = "SELECT COUNT(*) FROM Permisos WHERE nombre = @Nombre";
+
+                // Crea el parámetro
+                NpgsqlParameter paramNombre = _dbAccess.CreateParameter("@Nombre", nombre);
+
+                // Establece la conexión a la BD
+                _dbAccess.Connect();
+
+                // Ejecuta la consulta
+                object? resultado = _dbAccess.ExecuteScalar(query, paramNombre);
+
+                int cantidad = Convert.ToInt32(resultado);
+                bool existe = cantidad > 0;
+
+                return existe;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, $"Error al verificar la existencia del permiso con nombre '{nombre}'");
+                return false;
+            }
+            finally
+            {
+                // Asegura que se cierre la conexión
+                _dbAccess.Disconnect();
+            }
+        }
+
         public Permiso? ObtenerPermisoPorDescripcion(string descripcion)
         {
             try
             {
-                string query = "SELECT id_permiso, descripcion, estatus FROM Permisos WHERE descripcion = @Descripcion";
+                string query = "SELECT id_permiso, nombre, descripcion, estatus FROM Permisos WHERE descripcion = @Descripcion";
                 var paramDescripcion = _dbAccess.CreateParameter("@Descripcion", descripcion);
 
                 _dbAccess.Connect();
@@ -321,6 +363,7 @@ namespace InvSis.Data
                 DataRow row = resultado.Rows[0];
                 return new Permiso(
                     Convert.ToInt32(row["id_permiso"]),
+                    row["nombre"].ToString() ?? "",
                     row["descripcion"].ToString() ?? "",
                     Convert.ToInt32(row["estatus"])
                 );
@@ -328,6 +371,41 @@ namespace InvSis.Data
             catch (Exception ex)
             {
                 _logger.Error(ex, $"Error al obtener el permiso con descripción '{descripcion}'");
+                return null;
+            }
+            finally
+            {
+                _dbAccess.Disconnect();
+            }
+        }
+
+        public Permiso? ObtenerPermisoPorNombre(string nombre)
+        {
+            try
+            {
+                string query = "SELECT id_permiso, nombre, descripcion, estatus FROM Permisos WHERE nombre = @Nombre";
+                var paramNombre = _dbAccess.CreateParameter("@Nombre", nombre);
+
+                _dbAccess.Connect();
+                DataTable resultado = _dbAccess.ExecuteQuery_Reader(query, paramNombre);
+
+                if (resultado.Rows.Count == 0)
+                {
+                    _logger.Info($"No se encontró ningún permiso con el nombre '{nombre}'");
+                    return null;
+                }
+
+                DataRow row = resultado.Rows[0];
+                return new Permiso(
+                    Convert.ToInt32(row["id_permiso"]),
+                    row["nombre"].ToString() ?? "",
+                    row["descripcion"].ToString() ?? "",
+                    Convert.ToInt32(row["estatus"])
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, $"Error al obtener el permiso con nombre '{nombre}'");
                 return null;
             }
             finally
@@ -358,21 +436,28 @@ namespace InvSis.Data
             }
         }
 
-
-        
-
         public bool EliminarPermisoPorNombre(string nombrePermiso)
         {
             try
             {
-                string query = "UPDATE Permisos SET estatus = 2 WHERE descripcion = @Descripcion"; // Establece estatus 2 para inactivo
+                string query = "UPDATE Permisos SET estatus = 2 WHERE nombre = @Nombre"; // Establece estatus 2 para inactivo
 
-                NpgsqlParameter paramNombre = _dbAccess.CreateParameter("@Descripcion", nombrePermiso);
+                NpgsqlParameter paramNombre = _dbAccess.CreateParameter("@Nombre", nombrePermiso);
 
                 _dbAccess.Connect();
                 int filas = _dbAccess.ExecuteNonQuery(query, paramNombre);
 
-                return filas > 0;
+                bool exito = filas > 0;
+                if (exito)
+                {
+                    _logger.Info($"Permiso con nombre '{nombrePermiso}' eliminado correctamente.");
+                }
+                else
+                {
+                    _logger.Warn($"No se pudo eliminar el permiso con nombre '{nombrePermiso}'. No se encontró el registro.");
+                }
+
+                return exito;
             }
             catch (Exception ex)
             {
@@ -384,7 +469,6 @@ namespace InvSis.Data
                 _dbAccess.Disconnect();
             }
         }
-
 
         public bool EliminarPermisoPorDescripcion(string descripcion)
         {
@@ -425,7 +509,5 @@ namespace InvSis.Data
                 _dbAccess.Disconnect();
             }
         }
-
-
     }
 }
