@@ -59,13 +59,14 @@ namespace InvSis.Views
             btnAgregar.TabIndex = 7;
             btnAgregar.Text = "Agregar";
             btnAgregar.UseVisualStyleBackColor = true;
+            btnAgregar.Click += btnAgregar_Click;
             // 
             // txtNombrePermiso
             // 
             txtNombrePermiso.Location = new Point(766, 192);
             txtNombrePermiso.Margin = new Padding(3, 2, 3, 2);
             txtNombrePermiso.Name = "txtNombrePermiso";
-            txtNombrePermiso.Size = new Size(319, 27);
+            txtNombrePermiso.Size = new Size(319, 23);
             txtNombrePermiso.TabIndex = 2;
             // 
             // lblNombrePermiso
@@ -74,7 +75,7 @@ namespace InvSis.Views
             lblNombrePermiso.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblNombrePermiso.Location = new Point(586, 192);
             lblNombrePermiso.Name = "lblNombrePermiso";
-            lblNombrePermiso.Size = new Size(193, 28);
+            lblNombrePermiso.Size = new Size(154, 21);
             lblNombrePermiso.TabIndex = 1;
             lblNombrePermiso.Text = "Nombre del permiso";
             // 
@@ -84,7 +85,7 @@ namespace InvSis.Views
             lbAgregarEditarPermiso.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lbAgregarEditarPermiso.Location = new Point(693, 129);
             lbAgregarEditarPermiso.Name = "lbAgregarEditarPermiso";
-            lbAgregarEditarPermiso.Size = new Size(327, 38);
+            lbAgregarEditarPermiso.Size = new Size(258, 30);
             lbAgregarEditarPermiso.TabIndex = 0;
             lbAgregarEditarPermiso.Text = "Agregar o editar permiso";
             // 
@@ -151,6 +152,7 @@ namespace InvSis.Views
             btnInhabilitar.TabIndex = 8;
             btnInhabilitar.Text = "Inhabilitar";
             btnInhabilitar.UseVisualStyleBackColor = true;
+            btnInhabilitar.Click += btnInhabilitar_Click;
             // 
             // lbDescripcion
             // 
@@ -158,7 +160,7 @@ namespace InvSis.Views
             lbDescripcion.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lbDescripcion.Location = new Point(586, 254);
             lbDescripcion.Name = "lbDescripcion";
-            lbDescripcion.Size = new Size(222, 28);
+            lbDescripcion.Size = new Size(177, 21);
             lbDescripcion.TabIndex = 10;
             lbDescripcion.Text = "Descripcion del permiso";
             // 
@@ -166,12 +168,12 @@ namespace InvSis.Views
             // 
             txtDescripcion.Location = new Point(766, 256);
             txtDescripcion.Name = "txtDescripcion";
-            txtDescripcion.Size = new Size(319, 27);
+            txtDescripcion.Size = new Size(319, 23);
             txtDescripcion.TabIndex = 11;
             // 
             // frmGestrionPermisos
             // 
-            AutoScaleDimensions = new SizeF(9F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(230, 242, 248);
             ClientSize = new Size(1133, 681);
