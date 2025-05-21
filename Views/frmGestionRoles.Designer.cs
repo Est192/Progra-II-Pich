@@ -32,23 +32,25 @@ namespace InvSis.Views
             lblTitulo = new Label();
             btnAgregarRol = new Button();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            dataGridView1 = new DataGridView();
+            dgvRoles = new DataGridView();
             NombrePermiso = new DataGridViewTextBoxColumn();
             EstatusPermiso = new DataGridViewTextBoxColumn();
             lblSelección = new Label();
-            dataGridView2 = new DataGridView();
+            dgvPermisosAsignados = new DataGridView();
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             Descripcion_Permiso = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
-            dataGridView3 = new DataGridView();
+            dtvPermisosDiaponibles = new DataGridView();
             dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
             label1 = new Label();
             label2 = new Label();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
+            btnAgregar = new Button();
+            btnEliminar = new Button();
+            ((System.ComponentModel.ISupportInitialize)dgvRoles).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPermisosAsignados).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dtvPermisosDiaponibles).BeginInit();
             SuspendLayout();
             // 
             // lblTitulo
@@ -75,21 +77,20 @@ namespace InvSis.Views
             btnAgregarRol.TabIndex = 5;
             btnAgregarRol.Text = "Agregar rol";
             btnAgregarRol.UseVisualStyleBackColor = true;
-            btnAgregarRol.Click += btnAgregarRol_Click_1;
             // 
-            // dataGridView1
+            // dgvRoles
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { NombrePermiso, EstatusPermiso });
-            dataGridView1.Location = new Point(48, 102);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(354, 565);
-            dataGridView1.TabIndex = 19;
+            dgvRoles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvRoles.Columns.AddRange(new DataGridViewColumn[] { NombrePermiso, EstatusPermiso });
+            dgvRoles.Location = new Point(48, 102);
+            dgvRoles.Name = "dgvRoles";
+            dgvRoles.RowHeadersWidth = 51;
+            dgvRoles.Size = new Size(354, 565);
+            dgvRoles.TabIndex = 19;
             // 
             // NombrePermiso
             // 
-            NombrePermiso.DataPropertyName = "Nombre";
+            NombrePermiso.DataPropertyName = "NombreRol";
             NombrePermiso.HeaderText = "Nombre";
             NombrePermiso.MinimumWidth = 150;
             NombrePermiso.Name = "NombrePermiso";
@@ -114,15 +115,15 @@ namespace InvSis.Views
             lblSelección.TabIndex = 21;
             lblSelección.Text = "Seleccione rol para asignación de permisos";
             // 
-            // dataGridView2
+            // dgvPermisosAsignados
             // 
-            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, Descripcion_Permiso, dataGridViewTextBoxColumn2 });
-            dataGridView2.Location = new Point(464, 419);
-            dataGridView2.Name = "dataGridView2";
-            dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(829, 248);
-            dataGridView2.TabIndex = 22;
+            dgvPermisosAsignados.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvPermisosAsignados.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, Descripcion_Permiso, dataGridViewTextBoxColumn2 });
+            dgvPermisosAsignados.Location = new Point(464, 419);
+            dgvPermisosAsignados.Name = "dgvPermisosAsignados";
+            dgvPermisosAsignados.RowHeadersWidth = 51;
+            dgvPermisosAsignados.Size = new Size(829, 248);
+            dgvPermisosAsignados.TabIndex = 22;
             // 
             // dataGridViewTextBoxColumn1
             // 
@@ -150,15 +151,15 @@ namespace InvSis.Views
             dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             dataGridViewTextBoxColumn2.Width = 125;
             // 
-            // dataGridView3
+            // dtvPermisosDiaponibles
             // 
-            dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView3.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5 });
-            dataGridView3.Location = new Point(464, 102);
-            dataGridView3.Name = "dataGridView3";
-            dataGridView3.RowHeadersWidth = 51;
-            dataGridView3.Size = new Size(829, 248);
-            dataGridView3.TabIndex = 23;
+            dtvPermisosDiaponibles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dtvPermisosDiaponibles.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn3, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5 });
+            dtvPermisosDiaponibles.Location = new Point(464, 102);
+            dtvPermisosDiaponibles.Name = "dtvPermisosDiaponibles";
+            dtvPermisosDiaponibles.RowHeadersWidth = 51;
+            dtvPermisosDiaponibles.Size = new Size(829, 248);
+            dtvPermisosDiaponibles.TabIndex = 23;
             // 
             // dataGridViewTextBoxColumn3
             // 
@@ -206,27 +207,47 @@ namespace InvSis.Views
             label2.TabIndex = 25;
             label2.Text = "Agregar permisos al rol";
             // 
+            // btnAgregar
+            // 
+            btnAgregar.Location = new Point(1218, 356);
+            btnAgregar.Name = "btnAgregar";
+            btnAgregar.Size = new Size(75, 23);
+            btnAgregar.TabIndex = 26;
+            btnAgregar.Text = "Agregar";
+            btnAgregar.UseVisualStyleBackColor = true;
+            // 
+            // btnEliminar
+            // 
+            btnEliminar.Location = new Point(1218, 672);
+            btnEliminar.Name = "btnEliminar";
+            btnEliminar.Size = new Size(75, 23);
+            btnEliminar.TabIndex = 27;
+            btnEliminar.Text = "Eliminar";
+            btnEliminar.UseVisualStyleBackColor = true;
+            // 
             // frmGestionRoles
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(230, 242, 248);
             ClientSize = new Size(1347, 722);
+            Controls.Add(btnEliminar);
+            Controls.Add(btnAgregar);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(dataGridView3);
-            Controls.Add(dataGridView2);
+            Controls.Add(dtvPermisosDiaponibles);
+            Controls.Add(dgvPermisosAsignados);
             Controls.Add(lblSelección);
-            Controls.Add(dataGridView1);
+            Controls.Add(dgvRoles);
             Controls.Add(lblTitulo);
             Controls.Add(btnAgregarRol);
             ForeColor = SystemColors.Desktop;
             Margin = new Padding(3, 2, 3, 2);
             Name = "frmGestionRoles";
             Text = "frmGestionRoles";
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvRoles).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPermisosAsignados).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dtvPermisosDiaponibles).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -246,19 +267,21 @@ namespace InvSis.Views
         private Label lblTitulo;
         private Button btnAgregarRol;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private DataGridView dataGridView1;
+        private DataGridView dgvRoles;
         private DataGridViewTextBoxColumn NombrePermiso;
         private DataGridViewTextBoxColumn EstatusPermiso;
         private Label lblSelección;
-        private DataGridView dataGridView2;
+        private DataGridView dgvPermisosAsignados;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private DataGridViewTextBoxColumn Descripcion_Permiso;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private DataGridView dataGridView3;
+        private DataGridView dtvPermisosDiaponibles;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
         private Label label1;
         private Label label2;
+        private Button btnAgregar;
+        private Button btnEliminar;
     }
 }

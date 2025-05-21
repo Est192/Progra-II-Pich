@@ -1,97 +1,79 @@
-﻿namespace InvSis.Controllers
-{
-    using InvSis.Data;
-    using InvSis.Model;
-    using InvSis.Views;
-    using System;
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using InvSis.Data;
+using InvSis.Model;
 
+namespace InvSis.Controllers
+{
     public class RolesController
     {
-        private readonly frmGestionRoles _view;
-        private readonly RolesDataAccess _dataAccess;
+        internal readonly RolesDataAccess _rolesDataAccess;
+        internal readonly PermisosController _permisosController;
+        internal readonly RolPermisoDataAccess _rolPermisoDataAccess;
 
-        // Constructor que recibe la vista y la capa de acceso a datos
-        public RolesController(frmGestionRoles view)
+        public RolesController()
         {
-            _view = view;
-            _dataAccess = new RolesDataAccess();
+            _rolesDataAccess = new RolesDataAccess();
+            _permisosController = new PermisosController(null); // Si quieres pasar vista, ajusta
+            _rolPermisoDataAccess = new RolPermisoDataAccess();
         }
 
-        // Método para cargar todos los roles en el ComboBox de la vista
-        public void LoadRolesForComboBox()
+        public bool AgregarRol(Rol rol)
         {
-            List<Rol> roles = _dataAccess.ObtenerTodosLosRoles();
-            _view.PopulateRolesComboBox(roles); // Método que debe estar en la vista
+            int id = _rolesDataAccess.InsertarRol(rol);
+            return id > 0;
         }
 
-        // Método para cargar todos los permisos en el ComboBox de la vista
-        public void LoadPermissionsForComboBox()
+        public bool ActualizarRol(Rol rol)
         {
-            List<Permiso> permisos = _dataAccess.ObtenerPermisosDeRol(0); // Obtener todos los permisos (puedes modificar el ID del rol)
-            _view.PopulatePermissionsComboBox(permisos); // Método que debe estar en la vista
+            return _rolesDataAccess.ActualizarRol(rol);
         }
 
-        // Método para agregar un nuevo rol
-        public void AddRole(string nombreRol, string estatus)
+        public Rol? GetRolPorNombre(string nombreRol)
         {
-            var rol = new Rol
+            var todos = ObtenerRoles(soloActivos: false);
+            foreach (var rol in todos)
             {
-                NombreRol = nombreRol,
-                Estatus = estatus == "Activo" ? 1 : 2 // Mapea "Activo" a 1 y "Inactivo" a 2
-            };
-
-            int idGenerado = _dataAccess.InsertarRol(rol);
-            if (idGenerado > 0)
-            {
-                _view.ShowMessage("Rol agregado exitosamente.");
+                if (rol.NombreRol.Equals(nombreRol, System.StringComparison.OrdinalIgnoreCase))
+                    return rol;
             }
-            else
-            {
-                _view.ShowMessage("Error al agregar el rol.");
-            }
+            return null;
         }
 
-        // Método para eliminar un rol (cambiar el estatus a inactivo)
-        public void DeleteRole(int idRol)
+        public List<Rol> ObtenerRoles(bool soloActivos = true)
         {
-            bool exito = _dataAccess.EliminarRol(idRol);
-            if (exito)
-            {
-                _view.ShowMessage("Rol desactivado exitosamente.");
-            }
-            else
-            {
-                _view.ShowMessage("Error al desactivar el rol.");
-            }
+            return _rolesDataAccess.ObtenerTodosLosRoles(soloActivos);
         }
 
-        // Método para asignar un permiso a un rol
-        public void AssignPermissionToRole(int idRol, int idPermiso)
+        public bool InhabilitarRolPorId(int idRol)
         {
-            bool exito = _dataAccess.AsignarPermisoARol(idRol, idPermiso);
-            if (exito)
-            {
-                _view.ShowMessage("Permiso asignado correctamente.");
-            }
-            else
-            {
-                _view.ShowMessage("Error al asignar el permiso.");
-            }
+            return _rolesDataAccess.EliminarRol(idRol);
         }
 
-        // Método para remover un permiso de un rol
-        public void RemovePermissionFromRole(int idRol, int idPermiso)
+        // Asignar permiso a rol
+        public bool AsignarPermisoARol(int idRol, int idPermiso)
         {
-            bool exito = _dataAccess.RemoverPermisoDeRol(idRol, idPermiso);
-            if (exito)
-            {
-                _view.ShowMessage("Permiso removido correctamente.");
-            }
-            else
-            {
-                _view.ShowMessage("Error al remover el permiso.");
-            }
+            return _rolPermisoDataAccess.InsertarRolPermiso(idRol, idPermiso);
+        }
+
+        // Eliminar permiso asignado a rol
+        public bool RemoverPermisoDeRol(int idRol, int idPermiso)
+        {
+            return _rolPermisoDataAccess.EliminarRolPermiso(idRol, idPermiso);
+        }
+
+        // Obtener permisos asignados a un rol
+        public List<Permiso> ObtenerPermisosAsignados(int idRol)
+        {
+            return _rolPermisoDataAccess.ObtenerPermisosDeRol(idRol);
+        }
+
+        // Obtener permisos disponibles para asignar (todos menos los ya asignados)
+        public List<Permiso> ObtenerPermisosDisponibles(int idRol)
+        {
+            var todos = _permisosController.ObtenerPermisos(soloActivos: true);
+            var asignados = ObtenerPermisosAsignados(idRol);
+            return todos.Where(p => !asignados.Any(a => a.IdPermiso == p.IdPermiso)).ToList();
         }
     }
 }

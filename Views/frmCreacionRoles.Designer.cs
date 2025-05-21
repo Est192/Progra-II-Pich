@@ -37,8 +37,10 @@
             txtNombrePermiso = new TextBox();
             NombrePermiso = new DataGridViewTextBoxColumn();
             EstatusPermiso = new DataGridViewTextBoxColumn();
+
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
+
             // 
             // dataGridView1
             // 
@@ -49,6 +51,7 @@
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.Size = new Size(855, 596);
             dataGridView1.TabIndex = 18;
+
             // 
             // btnInhabilitar
             // 
@@ -62,6 +65,7 @@
             btnInhabilitar.Text = "Inhabilitar";
             btnInhabilitar.UseVisualStyleBackColor = true;
             btnInhabilitar.Click += btnInhabilitar_Click;
+
             // 
             // btnAgregar
             // 
@@ -75,6 +79,7 @@
             btnAgregar.Text = "Agregar";
             btnAgregar.UseVisualStyleBackColor = true;
             btnAgregar.Click += btnAgregar_Click;
+
             // 
             // lblTitulo
             // 
@@ -88,6 +93,7 @@
             lblTitulo.TabIndex = 12;
             lblTitulo.Text = "CREACION Y ELIMINACION DE ROLES";
             lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
+
             // 
             // lbAgregarEditarPermiso
             // 
@@ -98,6 +104,7 @@
             lbAgregarEditarPermiso.Size = new Size(205, 30);
             lbAgregarEditarPermiso.TabIndex = 13;
             lbAgregarEditarPermiso.Text = "Agregar o editar rol";
+
             // 
             // lblNombreRol
             // 
@@ -108,6 +115,7 @@
             lblNombreRol.Size = new Size(116, 21);
             lblNombreRol.TabIndex = 14;
             lblNombreRol.Text = "Nombre del rol";
+
             // 
             // txtNombrePermiso
             // 
@@ -116,15 +124,17 @@
             txtNombrePermiso.Name = "txtNombrePermiso";
             txtNombrePermiso.Size = new Size(319, 23);
             txtNombrePermiso.TabIndex = 15;
+
             // 
             // NombrePermiso
             // 
-            NombrePermiso.DataPropertyName = "Nombre";
+            NombrePermiso.DataPropertyName = "NombreRol"; // Aquí la propiedad correcta
             NombrePermiso.HeaderText = "Nombre";
             NombrePermiso.MinimumWidth = 400;
             NombrePermiso.Name = "NombrePermiso";
             NombrePermiso.Resizable = DataGridViewTriState.False;
             NombrePermiso.Width = 400;
+
             // 
             // EstatusPermiso
             // 
@@ -133,6 +143,7 @@
             EstatusPermiso.MinimumWidth = 400;
             EstatusPermiso.Name = "EstatusPermiso";
             EstatusPermiso.Width = 400;
+
             // 
             // frmCreacionRoles
             // 
@@ -148,10 +159,12 @@
             Controls.Add(txtNombrePermiso);
             Name = "frmCreacionRoles";
             Text = "frmCreacionRoles";
+
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
+
 
         #endregion
         private DataGridView dataGridView1;
