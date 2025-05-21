@@ -135,20 +135,7 @@ namespace InvSis
         }
 
         private void btnDetalle_Click(object sender, EventArgs e)
-        {
-            // Crear una instancia del formulario de detalles
-            frmDetalleProductoForm detalleProducto = new frmDetalleProductoForm();
-
-            detalleProducto.StartPosition = FormStartPosition.CenterParent;
-            detalleProducto.FormBorderStyle = FormBorderStyle.FixedDialog;
-            detalleProducto.MaximizeBox = false;
-            detalleProducto.MinimizeBox = false;
-
-            // Pasar los datos del producto al formulario de detalles
-
-
-            // Mostrar el formulario como diálogo
-            detalleProducto.ShowDialog(this);
+        {            
         }
 
         private void btnApF_Click(object sender, EventArgs e)

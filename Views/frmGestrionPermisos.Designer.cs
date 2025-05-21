@@ -59,6 +59,7 @@ namespace InvSis.Views
             btnAgregar.TabIndex = 7;
             btnAgregar.Text = "Agregar";
             btnAgregar.UseVisualStyleBackColor = true;
+            btnAgregar.Click += btnAgregar_Click;
             // 
             // txtNombrePermiso
             // 
@@ -151,6 +152,7 @@ namespace InvSis.Views
             btnInhabilitar.TabIndex = 8;
             btnInhabilitar.Text = "Inhabilitar";
             btnInhabilitar.UseVisualStyleBackColor = true;
+            btnInhabilitar.Click += btnInhabilitar_Click;
             // 
             // lbDescripcion
             // 

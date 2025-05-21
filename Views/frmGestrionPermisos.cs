@@ -13,7 +13,7 @@ namespace InvSis.Views
             _controller = new PermisosController(this); // Asignamos el controlador
         }
 
-        
+
 
         // Método para mostrar mensajes
         public void ShowMessage(string message)
@@ -21,21 +21,14 @@ namespace InvSis.Views
             MessageBox.Show(message);
         }
 
-        
+        private void btnAgregar_Click(object sender, EventArgs e)
+        {
 
-        
+        }
 
+        private void btnInhabilitar_Click(object sender, EventArgs e)
+        {
 
-
-
-        
-
-
-        
-
-
-        
-
-        
+        }
     }
 }
