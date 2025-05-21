@@ -37,24 +37,25 @@ namespace InvSis.Views
             lbAgregarEditarPermiso = new Label();
             lblTitulo = new Label();
             dataGridView1 = new DataGridView();
-            permisosControllerBindingSource = new BindingSource(components);
-            btnEliminar = new Button();
-            lbDescripcion = new Label();
-            txtDescripcion = new TextBox();
             NombrePermiso = new DataGridViewTextBoxColumn();
             Descripcion_Permiso = new DataGridViewTextBoxColumn();
             EstatusPermiso = new DataGridViewTextBoxColumn();
+            permisosControllerBindingSource = new BindingSource(components);
+            btnInhabilitar = new Button();
+            lbDescripcion = new Label();
+            txtDescripcion = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)permisosControllerBindingSource).BeginInit();
             SuspendLayout();
             // 
             // btnAgregar
             // 
+            btnAgregar.AutoSize = true;
             btnAgregar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnAgregar.Location = new Point(991, 320);
             btnAgregar.Margin = new Padding(3, 2, 3, 2);
             btnAgregar.Name = "btnAgregar";
-            btnAgregar.Size = new Size(94, 33);
+            btnAgregar.Size = new Size(94, 38);
             btnAgregar.TabIndex = 7;
             btnAgregar.Text = "Agregar";
             btnAgregar.UseVisualStyleBackColor = true;
@@ -64,7 +65,7 @@ namespace InvSis.Views
             txtNombrePermiso.Location = new Point(766, 192);
             txtNombrePermiso.Margin = new Padding(3, 2, 3, 2);
             txtNombrePermiso.Name = "txtNombrePermiso";
-            txtNombrePermiso.Size = new Size(319, 23);
+            txtNombrePermiso.Size = new Size(319, 27);
             txtNombrePermiso.TabIndex = 2;
             // 
             // lblNombrePermiso
@@ -73,7 +74,7 @@ namespace InvSis.Views
             lblNombrePermiso.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblNombrePermiso.Location = new Point(586, 192);
             lblNombrePermiso.Name = "lblNombrePermiso";
-            lblNombrePermiso.Size = new Size(154, 21);
+            lblNombrePermiso.Size = new Size(193, 28);
             lblNombrePermiso.TabIndex = 1;
             lblNombrePermiso.Text = "Nombre del permiso";
             // 
@@ -83,7 +84,7 @@ namespace InvSis.Views
             lbAgregarEditarPermiso.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lbAgregarEditarPermiso.Location = new Point(693, 129);
             lbAgregarEditarPermiso.Name = "lbAgregarEditarPermiso";
-            lbAgregarEditarPermiso.Size = new Size(258, 30);
+            lbAgregarEditarPermiso.Size = new Size(327, 38);
             lbAgregarEditarPermiso.TabIndex = 0;
             lbAgregarEditarPermiso.Text = "Agregar o editar permiso";
             // 
@@ -108,40 +109,9 @@ namespace InvSis.Views
             dataGridView1.DataSource = permisosControllerBindingSource;
             dataGridView1.Location = new Point(39, 60);
             dataGridView1.Name = "dataGridView1";
+            dataGridView1.RowHeadersWidth = 51;
             dataGridView1.Size = new Size(541, 596);
             dataGridView1.TabIndex = 9;
-            // 
-            // permisosControllerBindingSource
-            // 
-            permisosControllerBindingSource.DataSource = typeof(Controllers.PermisosController);
-            // 
-            // btnEliminar
-            // 
-            btnEliminar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnEliminar.Location = new Point(766, 320);
-            btnEliminar.Margin = new Padding(3, 2, 3, 2);
-            btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(94, 33);
-            btnEliminar.TabIndex = 8;
-            btnEliminar.Text = "Eliminar";
-            btnEliminar.UseVisualStyleBackColor = true;
-            // 
-            // lbDescripcion
-            // 
-            lbDescripcion.AutoSize = true;
-            lbDescripcion.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lbDescripcion.Location = new Point(586, 254);
-            lbDescripcion.Name = "lbDescripcion";
-            lbDescripcion.Size = new Size(177, 21);
-            lbDescripcion.TabIndex = 10;
-            lbDescripcion.Text = "Descripcion del permiso";
-            // 
-            // txtDescripcion
-            // 
-            txtDescripcion.Location = new Point(766, 256);
-            txtDescripcion.Name = "txtDescripcion";
-            txtDescripcion.Size = new Size(319, 23);
-            txtDescripcion.TabIndex = 11;
             // 
             // NombrePermiso
             // 
@@ -162,18 +132,53 @@ namespace InvSis.Views
             // EstatusPermiso
             // 
             EstatusPermiso.HeaderText = "Estatus";
+            EstatusPermiso.MinimumWidth = 6;
             EstatusPermiso.Name = "EstatusPermiso";
+            EstatusPermiso.Width = 125;
+            // 
+            // permisosControllerBindingSource
+            // 
+            permisosControllerBindingSource.DataSource = typeof(Controllers.PermisosController);
+            // 
+            // btnInhabilitar
+            // 
+            btnInhabilitar.AutoSize = true;
+            btnInhabilitar.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnInhabilitar.Location = new Point(766, 320);
+            btnInhabilitar.Margin = new Padding(3, 2, 3, 2);
+            btnInhabilitar.Name = "btnInhabilitar";
+            btnInhabilitar.Size = new Size(110, 38);
+            btnInhabilitar.TabIndex = 8;
+            btnInhabilitar.Text = "Inhabilitar";
+            btnInhabilitar.UseVisualStyleBackColor = true;
+            // 
+            // lbDescripcion
+            // 
+            lbDescripcion.AutoSize = true;
+            lbDescripcion.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbDescripcion.Location = new Point(586, 254);
+            lbDescripcion.Name = "lbDescripcion";
+            lbDescripcion.Size = new Size(222, 28);
+            lbDescripcion.TabIndex = 10;
+            lbDescripcion.Text = "Descripcion del permiso";
+            // 
+            // txtDescripcion
+            // 
+            txtDescripcion.Location = new Point(766, 256);
+            txtDescripcion.Name = "txtDescripcion";
+            txtDescripcion.Size = new Size(319, 27);
+            txtDescripcion.TabIndex = 11;
             // 
             // frmGestrionPermisos
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(230, 242, 248);
             ClientSize = new Size(1133, 681);
             Controls.Add(txtDescripcion);
             Controls.Add(lbDescripcion);
             Controls.Add(dataGridView1);
-            Controls.Add(btnEliminar);
+            Controls.Add(btnInhabilitar);
             Controls.Add(btnAgregar);
             Controls.Add(lblTitulo);
             Controls.Add(lbAgregarEditarPermiso);
@@ -189,7 +194,7 @@ namespace InvSis.Views
             PerformLayout();
         }
 
-       
+
 
         private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
         {
@@ -204,7 +209,7 @@ namespace InvSis.Views
         private Button btnAgregar;
         private DataGridView dataGridView1;
         private BindingSource permisosControllerBindingSource;
-        private Button btnEliminar;
+        private Button btnInhabilitar;
         private Label lbDescripcion;
         private TextBox txtDescripcion;
         private DataGridViewTextBoxColumn NombrePermiso;
