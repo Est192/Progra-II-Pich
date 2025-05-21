@@ -354,6 +354,7 @@ namespace InvSis.Data
                 {
                     permisos.Add(new Permiso(
                         Convert.ToInt32(row["id_permiso"]),
+                        row["nombre"].ToString() ?? "",
                         row["descripcion"].ToString() ?? "",
                         Convert.ToInt32(row["estatus"])
                     ));
