@@ -58,7 +58,6 @@ namespace InvSis.Views
             btnAgregar.TabIndex = 7;
             btnAgregar.Text = "Agregar";
             btnAgregar.UseVisualStyleBackColor = true;
-            btnAgregar.Click += btnAgregar_Click;
             // 
             // txtNombrePermiso
             // 
@@ -67,7 +66,6 @@ namespace InvSis.Views
             txtNombrePermiso.Name = "txtNombrePermiso";
             txtNombrePermiso.Size = new Size(319, 23);
             txtNombrePermiso.TabIndex = 2;
-            txtNombrePermiso.Leave += txtNombrePermiso_Leave;
             // 
             // lblNombrePermiso
             // 
@@ -127,7 +125,6 @@ namespace InvSis.Views
             btnEliminar.TabIndex = 8;
             btnEliminar.Text = "Eliminar";
             btnEliminar.UseVisualStyleBackColor = true;
-            btnEliminar.Click += button_Click_1;
             // 
             // lbDescripcion
             // 
@@ -186,25 +183,13 @@ namespace InvSis.Views
             Margin = new Padding(3, 2, 3, 2);
             Name = "frmGestrionPermisos";
             Text = "frmGestionPermisos";
-            Load += frmGestionPermisos_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)permisosControllerBindingSource).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
-        private void button_Click_1(object sender, EventArgs e)
-        {
-            int nombrePermiso = cbxPermisoElimicar.SelectedItem.ToString();
-
-            // Eliminar el permiso
-            _controller.DeletePermission(int.Parse());
-
-            // Actualizar el ComboBox con los permisos actuales
-           
-
-            MessageBox.Show("Permiso eliminado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
+       
 
         private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
         {

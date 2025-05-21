@@ -18,12 +18,7 @@
             _dataAccess = new PermisosDataAccess();
         }
 
-        // Cargar permisos en el ComboBox para eliminar
-        public void LoadPermissionsForDeletionComboBox()
-        {
-            List<Permiso> permisos = _dataAccess.ObtenerTodosLosPermisos();
-            _view.PopulatePermissionComboBox(permisos); // Llamamos a un método en la vista
-        }
+        
 
         // Agregar un permiso
         public void AddPermission(string nombrePermiso, string estatus)
