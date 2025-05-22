@@ -41,6 +41,7 @@
             txtNombre = new TextBox();
             lblNombre = new Label();
             gbEdicionOEliminacion = new GroupBox();
+            btAlta.Click += btAlta_Click;
             nudCambioEdad = new NumericUpDown();
             btEliminar = new Button();
             btGuardarCambios = new Button();
@@ -52,8 +53,12 @@
             txtCambioNombre = new TextBox();
             lblCambioNombre = new Label();
             lblSelección = new Label();
-            cbSelección = new ComboBox();
             lblTitulo = new Label();
+            dgvSeleccionPersona = new DataGridView();
+            Nombre = new DataGridViewTextBoxColumn();
+            Edad = new DataGridViewTextBoxColumn();
+            Sexo = new DataGridViewTextBoxColumn();
+            Nacionalidad = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)scPersonas).BeginInit();
             scPersonas.Panel1.SuspendLayout();
             scPersonas.Panel2.SuspendLayout();
@@ -62,6 +67,7 @@
             ((System.ComponentModel.ISupportInitialize)nudEdad).BeginInit();
             gbEdicionOEliminacion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudCambioEdad).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvSeleccionPersona).BeginInit();
             SuspendLayout();
             // 
             // scPersonas
@@ -78,8 +84,8 @@
             // scPersonas.Panel2
             // 
             scPersonas.Panel2.Controls.Add(gbEdicionOEliminacion);
-            scPersonas.Size = new Size(1367, 735);
-            scPersonas.SplitterDistance = 579;
+            scPersonas.Size = new Size(1465, 752);
+            scPersonas.SplitterDistance = 393;
             scPersonas.TabIndex = 3;
             // 
             // gbAlta
@@ -100,7 +106,7 @@
             gbAlta.Margin = new Padding(3, 2, 3, 2);
             gbAlta.Name = "gbAlta";
             gbAlta.Padding = new Padding(3, 2, 3, 2);
-            gbAlta.Size = new Size(579, 416);
+            gbAlta.Size = new Size(393, 750);
             gbAlta.TabIndex = 0;
             gbAlta.TabStop = false;
             gbAlta.Text = "Alta de persona";
@@ -127,7 +133,6 @@
             btAlta.Text = "Guardar";
             btAlta.TextAlign = ContentAlignment.MiddleRight;
             btAlta.UseVisualStyleBackColor = true;
-            btAlta.Click += btAlta_Click;
             // 
             // lblDatosObligatorios
             // 
@@ -210,6 +215,7 @@
             // gbEdicionOEliminacion
             // 
             gbEdicionOEliminacion.AutoSize = true;
+            gbEdicionOEliminacion.Controls.Add(dgvSeleccionPersona);
             gbEdicionOEliminacion.Controls.Add(nudCambioEdad);
             gbEdicionOEliminacion.Controls.Add(btEliminar);
             gbEdicionOEliminacion.Controls.Add(btGuardarCambios);
@@ -221,20 +227,19 @@
             gbEdicionOEliminacion.Controls.Add(txtCambioNombre);
             gbEdicionOEliminacion.Controls.Add(lblCambioNombre);
             gbEdicionOEliminacion.Controls.Add(lblSelección);
-            gbEdicionOEliminacion.Controls.Add(cbSelección);
             gbEdicionOEliminacion.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            gbEdicionOEliminacion.Location = new Point(3, 0);
+            gbEdicionOEliminacion.Location = new Point(3, 2);
             gbEdicionOEliminacion.Margin = new Padding(3, 2, 3, 2);
             gbEdicionOEliminacion.Name = "gbEdicionOEliminacion";
             gbEdicionOEliminacion.Padding = new Padding(3, 2, 3, 2);
-            gbEdicionOEliminacion.Size = new Size(413, 421);
+            gbEdicionOEliminacion.Size = new Size(1062, 754);
             gbEdicionOEliminacion.TabIndex = 0;
             gbEdicionOEliminacion.TabStop = false;
             gbEdicionOEliminacion.Text = "Edición o eliminación de persona";
             // 
             // nudCambioEdad
             // 
-            nudCambioEdad.Location = new Point(18, 316);
+            nudCambioEdad.Location = new Point(473, 665);
             nudCambioEdad.Margin = new Padding(3, 2, 3, 2);
             nudCambioEdad.Minimum = new decimal(new int[] { 18, 0, 0, 0 });
             nudCambioEdad.Name = "nudCambioEdad";
@@ -246,7 +251,7 @@
             // 
             btEliminar.AutoSize = true;
             btEliminar.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btEliminar.Location = new Point(251, 368);
+            btEliminar.Location = new Point(927, 547);
             btEliminar.Margin = new Padding(3, 2, 3, 2);
             btEliminar.Name = "btEliminar";
             btEliminar.Size = new Size(129, 29);
@@ -254,13 +259,12 @@
             btEliminar.Text = "Eliminar persona";
             btEliminar.TextAlign = ContentAlignment.MiddleRight;
             btEliminar.UseVisualStyleBackColor = true;
-            btEliminar.Click += btEliminar_Click;
             // 
             // btGuardarCambios
             // 
             btGuardarCambios.AutoSize = true;
             btGuardarCambios.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btGuardarCambios.Location = new Point(18, 368);
+            btGuardarCambios.Location = new Point(758, 663);
             btGuardarCambios.Margin = new Padding(3, 2, 3, 2);
             btGuardarCambios.Name = "btGuardarCambios";
             btGuardarCambios.Size = new Size(131, 29);
@@ -268,13 +272,12 @@
             btGuardarCambios.Text = "Guardar cambios";
             btGuardarCambios.TextAlign = ContentAlignment.MiddleRight;
             btGuardarCambios.UseVisualStyleBackColor = true;
-            btGuardarCambios.Click += btGuardarCambios_Click;
             // 
             // lblCambioEdad
             // 
             lblCambioEdad.AutoSize = true;
             lblCambioEdad.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCambioEdad.Location = new Point(18, 296);
+            lblCambioEdad.Location = new Point(473, 645);
             lblCambioEdad.Name = "lblCambioEdad";
             lblCambioEdad.Size = new Size(109, 19);
             lblCambioEdad.TabIndex = 21;
@@ -282,7 +285,7 @@
             // 
             // txtCambioNacionalidad
             // 
-            txtCambioNacionalidad.Location = new Point(18, 246);
+            txtCambioNacionalidad.Location = new Point(473, 595);
             txtCambioNacionalidad.Margin = new Padding(3, 2, 3, 2);
             txtCambioNacionalidad.MaxLength = 20;
             txtCambioNacionalidad.Name = "txtCambioNacionalidad";
@@ -293,7 +296,7 @@
             // 
             lblCambioNacionalidad.AutoSize = true;
             lblCambioNacionalidad.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCambioNacionalidad.Location = new Point(18, 226);
+            lblCambioNacionalidad.Location = new Point(473, 575);
             lblCambioNacionalidad.Name = "lblCambioNacionalidad";
             lblCambioNacionalidad.Size = new Size(155, 19);
             lblCambioNacionalidad.TabIndex = 19;
@@ -303,7 +306,7 @@
             // 
             cbCambioSexo.DropDownStyle = ComboBoxStyle.DropDownList;
             cbCambioSexo.FormattingEnabled = true;
-            cbCambioSexo.Location = new Point(18, 178);
+            cbCambioSexo.Location = new Point(122, 664);
             cbCambioSexo.Margin = new Padding(3, 2, 3, 2);
             cbCambioSexo.Name = "cbCambioSexo";
             cbCambioSexo.Size = new Size(261, 27);
@@ -313,7 +316,7 @@
             // 
             lblCambioSexo.AutoSize = true;
             lblCambioSexo.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCambioSexo.Location = new Point(18, 158);
+            lblCambioSexo.Location = new Point(122, 645);
             lblCambioSexo.Name = "lblCambioSexo";
             lblCambioSexo.Size = new Size(106, 19);
             lblCambioSexo.TabIndex = 17;
@@ -321,7 +324,7 @@
             // 
             // txtCambioNombre
             // 
-            txtCambioNombre.Location = new Point(18, 116);
+            txtCambioNombre.Location = new Point(122, 595);
             txtCambioNombre.Margin = new Padding(3, 2, 3, 2);
             txtCambioNombre.MaxLength = 20;
             txtCambioNombre.Name = "txtCambioNombre";
@@ -332,7 +335,7 @@
             // 
             lblCambioNombre.AutoSize = true;
             lblCambioNombre.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCambioNombre.Location = new Point(18, 96);
+            lblCambioNombre.Location = new Point(122, 575);
             lblCambioNombre.Name = "lblCambioNombre";
             lblCambioNombre.Size = new Size(127, 19);
             lblCambioNombre.TabIndex = 15;
@@ -348,16 +351,6 @@
             lblSelección.TabIndex = 14;
             lblSelección.Text = "Selección de persona *";
             // 
-            // cbSelección
-            // 
-            cbSelección.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbSelección.FormattingEnabled = true;
-            cbSelección.Location = new Point(18, 56);
-            cbSelección.Margin = new Padding(3, 2, 3, 2);
-            cbSelección.Name = "cbSelección";
-            cbSelección.Size = new Size(362, 27);
-            cbSelección.TabIndex = 4;
-            // 
             // lblTitulo
             // 
             lblTitulo.BackColor = Color.FromArgb(159, 122, 234);
@@ -366,17 +359,50 @@
             lblTitulo.ForeColor = Color.White;
             lblTitulo.Location = new Point(0, 0);
             lblTitulo.Name = "lblTitulo";
-            lblTitulo.Size = new Size(1367, 41);
+            lblTitulo.Size = new Size(1465, 41);
             lblTitulo.TabIndex = 0;
             lblTitulo.Text = "CONTROL PERSONAS";
             lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dgvSeleccionPersona
+            // 
+            dgvSeleccionPersona.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvSeleccionPersona.Columns.AddRange(new DataGridViewColumn[] { Nombre, Edad, Sexo, Nacionalidad });
+            dgvSeleccionPersona.Location = new Point(9, 62);
+            dgvSeleccionPersona.Name = "dgvSeleccionPersona";
+            dgvSeleccionPersona.Size = new Size(1044, 480);
+            dgvSeleccionPersona.TabIndex = 26;
+            // 
+            // Nombre
+            // 
+            Nombre.HeaderText = "Nombre completo";
+            Nombre.MinimumWidth = 550;
+            Nombre.Name = "Nombre";
+            Nombre.Width = 550;
+            // 
+            // Edad
+            // 
+            Edad.HeaderText = "Edad";
+            Edad.Name = "Edad";
+            // 
+            // Sexo
+            // 
+            Sexo.HeaderText = "Sexo";
+            Sexo.Name = "Sexo";
+            // 
+            // Nacionalidad
+            // 
+            Nacionalidad.HeaderText = "Nacionalidad";
+            Nacionalidad.MinimumWidth = 250;
+            Nacionalidad.Name = "Nacionalidad";
+            Nacionalidad.Width = 250;
             // 
             // frmPersona
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(230, 242, 248);
-            ClientSize = new Size(1367, 776);
+            ClientSize = new Size(1465, 793);
             Controls.Add(scPersonas);
             Controls.Add(lblTitulo);
             Font = new Font("Segoe UI", 9F, FontStyle.Bold);
@@ -395,6 +421,7 @@
             gbEdicionOEliminacion.ResumeLayout(false);
             gbEdicionOEliminacion.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)nudCambioEdad).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvSeleccionPersona).EndInit();
             ResumeLayout(false);
         }
 
@@ -429,9 +456,13 @@
         private TextBox txtCambioNombre;
         private Label lblCambioNombre;
         private Label lblSelección;
-        private ComboBox cbSelección;
         
         private NumericUpDown nudEdad;
         private NumericUpDown nudCambioEdad;
+        private DataGridView dgvSeleccionPersona;
+        private DataGridViewTextBoxColumn Nombre;
+        private DataGridViewTextBoxColumn Edad;
+        private DataGridViewTextBoxColumn Sexo;
+        private DataGridViewTextBoxColumn Nacionalidad;
     }
 }
