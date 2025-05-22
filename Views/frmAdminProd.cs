@@ -1,125 +1,257 @@
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 using InvSis.Business;
-using InvSis.Views;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using InvSis.Model;
 
 namespace InvSis
 {
     public partial class frmAdminProd : Form
     {
-
+        private readonly ProductosController _controller = new ProductosController();
+        private List<Producto> _productosCache = new List<Producto>();
+        private Producto? _productoSeleccionado = null;
+        private bool _modoEdicion = false;
 
         public frmAdminProd()
         {
             InitializeComponent();
+
             spcProductos.Panel2Collapsed = true;
-            cmbxCat.SelectedIndex = 0;
-            cmbxUbi.SelectedIndex = 0;
-            cmbxStatus.SelectedIndex = 0;
-            cmbxImpuesto.SelectedIndex = 0;
 
+            cmbxCat.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbxUbi.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbxStatus.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbxImpuesto.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            cmbCat.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbUbi.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbEstatus.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            dgvProductos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvProductos.MultiSelect = false;
+            dgvProductos.AutoGenerateColumns = false;
+
+            // Suscribimos evento para selección fila
+            dgvProductos.SelectionChanged += DgvProductos_SelectionChanged;
+
+            // Configura columnas manualmente (asegúrate que coincidan con tus columnas en diseñador)
+            ConfigurarColumnasDGV();
+
+            CargarProductosEnGrid();
         }
 
-        private void btnEdittemp_Click(object sender, EventArgs e)
+        private void ConfigurarColumnasDGV()
         {
-            spcProductos.Panel2Collapsed = false;
-            txtClave.ReadOnly = true;
-            spcProductos.Panel1.Enabled = false;
-            //frmEditarAgregarProducto editarProducto = new frmEditarAgregarProducto();
-            //editarProducto.ShowDialog();
+            dgvProductos.Columns.Clear();
 
-        }
-
-        private void btnCrg_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Tag = "Selecciona el archivo";
-            openFileDialog.Filter = "Archivos CSV (*.csv)|*.csv|Archivos Excel (*.xls)|*.xls|Archivos Excel (*.xlsx)|*.xlsx";
-            openFileDialog.ReadOnlyChecked = true;
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn
             {
-                string filePath = openFileDialog.FileName;
-                string extension = Path.GetExtension(filePath).ToLower();
-                if (extension == ".xls" || extension == ".xlsx" || extension == ".csv")
+                DataPropertyName = "Nombre",
+                HeaderText = "Nombre",
+                Width = 140,
+                Name = "colNombre"
+            });
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Categoria",
+                HeaderText = "Categoría",
+                Width = 140,
+                Name = "colCategoria"
+            });
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Costo",
+                HeaderText = "Costo unitario",
+                Width = 90,
+                Name = "colCosto",
+                DefaultCellStyle = { Format = "C2" }
+            });
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Stock",
+                HeaderText = "Stock",
+                Width = 60,
+                Name = "colStock"
+            });
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Ubicacion",
+                HeaderText = "Ubicación",
+                Width = 120,
+                Name = "colUbicacion"
+            });
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Impuesto",
+                Width = 100,
+                Name = "colImpuesto"
+            });
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                DataPropertyName = "Clave",
+                HeaderText = "Clave",
+                Width = 120,
+                Name = "colClave"
+            });
+            dgvProductos.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Estatus",
+                Width = 90,
+                Name = "colEstatus"
+            });
+        }
+
+        private void CargarProductosEnGrid(string? categoria = null, int? estatus = null, string? ubicacion = null)
+        {
+            var productos = _controller.ObtenerProductos(categoria, estatus);
+
+            if (!string.IsNullOrEmpty(ubicacion) && ubicacion != "Todo")
+                productos = productos.FindAll(p => p.Ubicacion == ubicacion);
+
+            _productosCache = productos;
+
+            // Asignar datasource
+            dgvProductos.DataSource = null;
+            dgvProductos.DataSource = productos;
+
+            // Como el impuesto no está directamente ligado a DataPropertyName, lo rellenamos aquí:
+            foreach (DataGridViewRow row in dgvProductos.Rows)
+            {
+                if (row.DataBoundItem is Producto p)
                 {
-                    //Cargar el archivo
-                    MessageBox.Show("Archivo valido " + filePath, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    row.Cells["colImpuesto"].Value = p.Impuesto?.TipoImpuesto ?? "No Aplica";
+                    row.Cells["colEstatus"].Value = p.Estatus == 1 ? "Activo" : "Inactivo";
+                }
+            }
+        }
+
+        private void DgvProductos_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvProductos.CurrentRow == null)
+            {
+                _productoSeleccionado = null;
+                return;
+            }
+
+            _productoSeleccionado = dgvProductos.CurrentRow.DataBoundItem as Producto;
+
+            if (_productoSeleccionado != null)
+            {
+                CargarProductoEnFormulario(_productoSeleccionado);
+                _modoEdicion = true;
+                spcProductos.Panel2Collapsed = false;
+                spcProductos.Panel1.Enabled = false;
+                txtClave.ReadOnly = true;
+            }
+        }
+
+        private void btnApF_Click_1(object sender, EventArgs e)
+        {
+            string categoria = cmbCat.SelectedItem?.ToString() ?? "Todo";
+            int? estatus = null;
+            if (cmbEstatus.SelectedItem != null)
+                estatus = cmbEstatus.SelectedItem.ToString() == "Activo" ? 1 : 0;
+
+            string ubicacion = cmbUbi.SelectedItem?.ToString() ?? "Todo";
+
+            if (categoria == "Todo" && estatus == null && (ubicacion == "Todo" || string.IsNullOrEmpty(ubicacion)))
+            {
+                MessageBox.Show("Debe seleccionar al menos un criterio de filtrado.",
+                    "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            CargarProductosEnGrid(categoria, estatus, ubicacion);
+        }
+
+        private void btnAgregar_Click_1(object sender, EventArgs e)
+        {
+            _modoEdicion = false;
+            _productoSeleccionado = null;
+            ReiniciarCampos();
+            spcProductos.Panel2Collapsed = false;
+            spcProductos.Panel1.Enabled = false;
+            txtClave.ReadOnly = false;
+        }
+
+        private void CargarProductoEnFormulario(Producto p)
+        {
+            txtNombre.Text = p.Nombre;
+            txtClave.Text = p.Clave;
+            txtCosto.Text = p.Costo.ToString("F2");
+            nmupdnStock.Value = p.Stock ?? 0;
+            cmbxCat.SelectedItem = p.Categoria;
+            cmbxUbi.SelectedItem = p.Ubicacion;
+            cmbxStatus.SelectedItem = p.Estatus == 1 ? "Activo" : "Inactivo";
+            cmbxImpuesto.SelectedItem = p.Impuesto?.TipoImpuesto ?? "No Aplica";
+        }
+
+        private void btnGuardar_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!ClaveProducto.ValidarCodigoProducto(txtClave.Text))
+                {
+                    MessageBox.Show("La clave no es válida.", "Código inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtClave.Focus();
+                    return;
+                }
+                if (string.IsNullOrWhiteSpace(txtNombre.Text))
+                {
+                    MessageBox.Show("El campo de nombre no puede estar vacío.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (string.IsNullOrWhiteSpace(txtCosto.Text) || !decimal.TryParse(txtCosto.Text.Replace("$", ""), out decimal costo))
+                {
+                    MessageBox.Show("El campo de costo no es válido.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var prod = new Producto
+                {
+                    IdProducto = _productoSeleccionado?.IdProducto ?? 0,
+                    Nombre = txtNombre.Text,
+                    Clave = txtClave.Text,
+                    Costo = costo,
+                    Stock = (int)nmupdnStock.Value,
+                    Categoria = cmbxCat.SelectedItem?.ToString() ?? "",
+                    Ubicacion = cmbxUbi.SelectedItem?.ToString() ?? "",
+                    Estatus = cmbxStatus.SelectedItem?.ToString() == "Activo" ? 1 : 0,
+                    AplicaImpuesto = cmbxImpuesto.SelectedItem?.ToString() != "No Aplica",
+                    IdImpuesto = null // Aquí tienes que asignar el IdImpuesto correcto según tu combo
+                };
+
+                if (_modoEdicion)
+                {
+                    bool actualizado = _controller.ActualizarProducto(prod);
+                    if (actualizado)
+                        MessageBox.Show("Producto actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    else
+                        MessageBox.Show("No se pudo actualizar el producto.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
-                    MessageBox.Show("Archivo INVALIDO", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    int nuevoId = _controller.InsertarProducto(prod);
+                    MessageBox.Show($"Producto agregado con ID {nuevoId}.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
+
+                spcProductos.Panel2Collapsed = true;
+                spcProductos.Panel1.Enabled = true;
+                ReiniciarCampos();
+                CargarProductosEnGrid();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void btnGuardar_Click(object sender, EventArgs e)
+        private void btnCancelar_Click_1(object sender, EventArgs e)
         {
-            if (!ClaveProducto.ValidarCodigoProducto(txtClave.Text))
-            {
-                MessageBox.Show("La clave no es válida.",
-                    "Código inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtClave.Focus();
-                return;
-            }
-
-            // Validar que el campo nombre no este vacio
-            if (string.IsNullOrWhiteSpace(txtNombre.Text))
-            {
-                MessageBox.Show("El campo de nombre no puede de estar vacio. ", "Informacion del sistema", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Validar que el campo precio no este vacio
-            if (string.IsNullOrWhiteSpace(txtCosto.Text))
-            {
-                MessageBox.Show("El campo de precio no puede de estar vacio. ", "Informacion del sistema", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            MessageBox.Show("El Producto es valido para guardado ", "Informacion del sistema", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             spcProductos.Panel2Collapsed = true;
-
             spcProductos.Panel1.Enabled = true;
             ReiniciarCampos();
-
-        }
-
-        private void btnAgregar_Click(object sender, EventArgs e)
-        {
-            spcProductos.Panel2Collapsed = false;
-            txtClave.ReadOnly = false;
-            spcProductos.Panel1.Enabled = false;
-        }
-
-        private void btnCancelar_Click(object sender, EventArgs e)
-        {
-            spcProductos.Panel2Collapsed = true;
-
-            spcProductos.Panel1.Enabled = true;
-        }
-
-        private void txtCosto_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // Permitir solo dígitos, punto decimal y teclas de control (como backspace)
-            if (!char.IsDigit(e.KeyChar) && e.KeyChar != '.' && !char.IsControl(e.KeyChar))
-            {
-                e.Handled = true; // Cancelar la entrada del carácter
-            }
-
-            // Asegurar que solo haya un punto decimal
-            if (e.KeyChar == '.' && (sender as TextBox).Text.Contains('.'))
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void txtClave_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // Para la clave, solo permitir dígitos y teclas de control
-            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
-            {
-                e.Handled = true;
-            }
         }
 
         private void ReiniciarCampos()
@@ -132,33 +264,8 @@ namespace InvSis
             cmbxUbi.SelectedIndex = 0;
             cmbxStatus.SelectedIndex = 0;
             cmbxImpuesto.SelectedIndex = 0;
-        }
-
-        private void btnDetalle_Click(object sender, EventArgs e)
-        {            
-        }
-
-        private void btnApF_Click(object sender, EventArgs e)
-        {
-            // Verificar si al menos uno de los combobox tiene una selección válida
-            bool combo1Seleccionado = cmbCat.SelectedIndex != -1;
-            bool combo2Seleccionado = cmbEstatus.SelectedIndex != -1;
-
-            if (!combo1Seleccionado && !combo2Seleccionado)
-            {
-                MessageBox.Show("Debe seleccionar al menos un criterio de filtrado.",
-                    "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Si al menos uno está seleccionado, continuar con la aplicación de filtros
-            MessageBox.Show("Aplica los filtros a la tabla",
-                    "Filtrado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void lblFilCat_Click(object sender, EventArgs e)
-        {
-
+            _productoSeleccionado = null;
+            _modoEdicion = false;
         }
     }
 }

@@ -29,40 +29,30 @@ namespace InvSis.Data
             }
         }
 
-        /// <summary>
-        /// Inserta un nuevo producto en la base de datos
-        /// </summary>
         public int InsertarProducto(Producto producto)
         {
             try
             {
-                // Validación adicional para impuestos
                 if (producto.AplicaImpuesto && !producto.IdImpuesto.HasValue)
-                {
                     throw new ArgumentException("Debe especificar un ID de impuesto cuando AplicaImpuesto es verdadero");
-                }
 
-                // Validar que el impuesto exista si aplica
                 if (producto.AplicaImpuesto && producto.IdImpuesto.HasValue)
                 {
                     var impuesto = _impuestosDataAccess.ObtenerImpuestoPorId(producto.IdImpuesto.Value);
                     if (impuesto == null)
-                    {
                         throw new ArgumentException($"No existe el impuesto con ID {producto.IdImpuesto.Value}");
-                    }
                 }
 
                 string query = @"INSERT INTO Productos (nombre, categoria, costo, stock, ubicacion, clave, estatus, aplica_impuesto, id_impuesto) 
                                 VALUES (@Nombre, @Categoria, @Costo, @Stock, @Ubicacion, @Clave, @Estatus, @AplicaImpuesto, @IdImpuesto) 
                                 RETURNING id_producto";
 
-                // Creación de parámetros con manejo de nulos
                 var parameters = new[]
                 {
                     _dbAccess.CreateParameter("@Nombre", producto.Nombre),
                     _dbAccess.CreateParameter("@Categoria", producto.Categoria ?? (object)DBNull.Value),
                     _dbAccess.CreateParameter("@Costo", producto.Costo),
-                    _dbAccess.CreateParameter("@Stock", producto.Stock),
+                    _dbAccess.CreateParameter("@Stock", producto.Stock ?? (object)DBNull.Value),
                     _dbAccess.CreateParameter("@Ubicacion", producto.Ubicacion ?? (object)DBNull.Value),
                     _dbAccess.CreateParameter("@Clave", producto.Clave),
                     _dbAccess.CreateParameter("@Estatus", producto.Estatus),
@@ -89,27 +79,18 @@ namespace InvSis.Data
             }
         }
 
-        /// <summary>
-        /// Actualiza un producto existente en la base de datos
-        /// </summary>
         public bool ActualizarProducto(Producto producto)
         {
             try
             {
-                // Validación adicional para impuestos
                 if (producto.AplicaImpuesto && !producto.IdImpuesto.HasValue)
-                {
                     throw new ArgumentException("Debe especificar un ID de impuesto cuando AplicaImpuesto es verdadero");
-                }
 
-                // Validar que el impuesto exista si aplica
                 if (producto.AplicaImpuesto && producto.IdImpuesto.HasValue)
                 {
                     var impuesto = _impuestosDataAccess.ObtenerImpuestoPorId(producto.IdImpuesto.Value);
                     if (impuesto == null)
-                    {
                         throw new ArgumentException($"No existe el impuesto con ID {producto.IdImpuesto.Value}");
-                    }
                 }
 
                 string query = @"UPDATE Productos 
@@ -124,14 +105,13 @@ namespace InvSis.Data
                                     id_impuesto = @IdImpuesto 
                                 WHERE id_producto = @IdProducto";
 
-                // Creación de parámetros con manejo de nulos
                 var parameters = new[]
                 {
                     _dbAccess.CreateParameter("@IdProducto", producto.IdProducto),
                     _dbAccess.CreateParameter("@Nombre", producto.Nombre),
                     _dbAccess.CreateParameter("@Categoria", producto.Categoria ?? (object)DBNull.Value),
                     _dbAccess.CreateParameter("@Costo", producto.Costo),
-                    _dbAccess.CreateParameter("@Stock", producto.Stock),
+                    _dbAccess.CreateParameter("@Stock", producto.Stock ?? (object)DBNull.Value),
                     _dbAccess.CreateParameter("@Ubicacion", producto.Ubicacion ?? (object)DBNull.Value),
                     _dbAccess.CreateParameter("@Clave", producto.Clave),
                     _dbAccess.CreateParameter("@Estatus", producto.Estatus),
@@ -164,9 +144,6 @@ namespace InvSis.Data
             }
         }
 
-        /// <summary>
-        /// Elimina un producto de la base de datos
-        /// </summary>
         public bool EliminarProducto(int idProducto)
         {
             try
@@ -197,17 +174,17 @@ namespace InvSis.Data
             }
         }
 
-        /// <summary>
-        /// Obtiene un producto por su ID
-        /// </summary>
         public Producto? ObtenerProductoPorId(int idProducto)
         {
             try
             {
-                string query = @"SELECT id_producto, nombre, categoria, costo, stock, ubicacion, 
-                               clave, estatus, aplica_impuesto, id_impuesto 
-                               FROM Productos 
-                               WHERE id_producto = @IdProducto";
+                string query = @"
+                    SELECT p.id_producto, p.nombre, p.categoria, p.costo, p.stock, p.ubicacion, 
+                           p.clave, p.estatus, p.aplica_impuesto, p.id_impuesto,
+                           i.tipo_impuesto, i.cantidad_impuesto
+                    FROM Productos p
+                    LEFT JOIN impuestos i ON p.id_impuesto = i.id_impuesto
+                    WHERE p.id_producto = @IdProducto";
 
                 var paramId = _dbAccess.CreateParameter("@IdProducto", idProducto);
                 _dbAccess.Connect();
@@ -222,12 +199,6 @@ namespace InvSis.Data
                 DataRow row = resultado.Rows[0];
                 var producto = CrearProductoDesdeDataRow(row);
 
-                // Cargar impuesto si aplica
-                if (producto.AplicaImpuesto && producto.IdImpuesto.HasValue)
-                {
-                    producto.Impuesto = _impuestosDataAccess.ObtenerImpuestoPorId(producto.IdImpuesto.Value) ?? new Impuesto();
-                }
-
                 return producto;
             }
             catch (Exception ex)
@@ -241,18 +212,18 @@ namespace InvSis.Data
             }
         }
 
-        /// <summary>
-        /// Obtiene todos los productos de la base de datos
-        /// </summary>
         public List<Producto> ObtenerTodosLosProductos()
         {
             var productos = new List<Producto>();
 
             try
             {
-                string query = @"SELECT id_producto, nombre, categoria, costo, stock, ubicacion, 
-                               clave, estatus, aplica_impuesto, id_impuesto 
-                               FROM Productos";
+                string query = @"
+                    SELECT p.id_producto, p.nombre, p.categoria, p.costo, p.stock, p.ubicacion, 
+                           p.clave, p.estatus, p.aplica_impuesto, p.id_impuesto,
+                           i.tipo_impuesto, i.cantidad_impuesto
+                    FROM Productos p
+                    LEFT JOIN impuestos i ON p.id_impuesto = i.id_impuesto";
 
                 _dbAccess.Connect();
                 DataTable resultado = _dbAccess.ExecuteQuery_Reader(query);
@@ -261,15 +232,6 @@ namespace InvSis.Data
                 {
                     var producto = CrearProductoDesdeDataRow(row);
                     productos.Add(producto);
-                }
-
-                // Cargar impuestos para los productos que los tienen
-                foreach (var producto in productos)
-                {
-                    if (producto.AplicaImpuesto && producto.IdImpuesto.HasValue)
-                    {
-                        producto.Impuesto = _impuestosDataAccess.ObtenerImpuestoPorId(producto.IdImpuesto.Value) ?? new Impuesto();
-                    }
                 }
 
                 _logger.Info($"Se obtuvieron {productos.Count} productos");
@@ -286,9 +248,6 @@ namespace InvSis.Data
             }
         }
 
-        /// <summary>
-        /// Actualiza el stock de un producto
-        /// </summary>
         public bool ActualizarStock(int idProducto, int nuevoStock)
         {
             try
@@ -323,9 +282,6 @@ namespace InvSis.Data
             }
         }
 
-        /// <summary>
-        /// Verifica si existe un producto por su clave
-        /// </summary>
         public bool ExisteProductoPorClave(string clave)
         {
             try
@@ -349,17 +305,17 @@ namespace InvSis.Data
             }
         }
 
-        /// <summary>
-        /// Obtiene producto por clave
-        /// </summary>
         public Producto? ObtenerProductoPorClave(string clave)
         {
             try
             {
-                string query = @"SELECT id_producto, nombre, categoria, costo, stock, ubicacion, 
-                               clave, estatus, aplica_impuesto, id_impuesto 
-                               FROM Productos 
-                               WHERE clave = @Clave";
+                string query = @"
+                    SELECT p.id_producto, p.nombre, p.categoria, p.costo, p.stock, p.ubicacion, 
+                           p.clave, p.estatus, p.aplica_impuesto, p.id_impuesto,
+                           i.tipo_impuesto, i.cantidad_impuesto
+                    FROM Productos p
+                    LEFT JOIN impuestos i ON p.id_impuesto = i.id_impuesto
+                    WHERE p.clave = @Clave";
 
                 var paramClave = _dbAccess.CreateParameter("@Clave", clave);
                 _dbAccess.Connect();
@@ -374,12 +330,6 @@ namespace InvSis.Data
                 DataRow row = resultado.Rows[0];
                 var producto = CrearProductoDesdeDataRow(row);
 
-                // Cargar impuesto si aplica
-                if (producto.AplicaImpuesto && producto.IdImpuesto.HasValue)
-                {
-                    producto.Impuesto = _impuestosDataAccess.ObtenerImpuestoPorId(producto.IdImpuesto.Value) ?? new Impuesto();
-                }
-
                 return producto;
             }
             catch (Exception ex)
@@ -393,23 +343,35 @@ namespace InvSis.Data
             }
         }
 
-        /// <summary>
-        /// Método auxiliar para crear un Producto desde DataRow
-        /// </summary>
         private Producto CrearProductoDesdeDataRow(DataRow row)
         {
-            return new Producto(
+            var producto = new Producto(
                 idProducto: Convert.ToInt32(row["id_producto"]),
                 nombre: row["nombre"].ToString() ?? string.Empty,
                 categoria: row["categoria"] != DBNull.Value ? row["categoria"].ToString() : string.Empty,
                 costo: Convert.ToDecimal(row["costo"]),
-                stock: Convert.ToInt32(row["stock"]),
+                stock: row["stock"] != DBNull.Value ? Convert.ToInt32(row["stock"]) : (int?)null,
                 ubicacion: row["ubicacion"] != DBNull.Value ? row["ubicacion"].ToString() : string.Empty,
                 clave: row["clave"].ToString() ?? string.Empty,
                 estatus: Convert.ToInt32(row["estatus"]),
                 aplicaImpuesto: Convert.ToBoolean(row["aplica_impuesto"]),
                 idImpuesto: row["id_impuesto"] != DBNull.Value ? Convert.ToInt32(row["id_impuesto"]) : (int?)null
             );
+
+            if (producto.AplicaImpuesto && producto.IdImpuesto.HasValue)
+            {
+                producto.Impuesto = new Impuesto(
+                    id: producto.IdImpuesto.Value,
+                    tipo: row["tipo_impuesto"] != DBNull.Value ? row["tipo_impuesto"].ToString()! : string.Empty,
+                    cantidad: row["cantidad_impuesto"] != DBNull.Value ? Convert.ToDecimal(row["cantidad_impuesto"]) : 0m
+                );
+            }
+            else
+            {
+                producto.Impuesto = new Impuesto();
+            }
+
+            return producto;
         }
     }
 }
