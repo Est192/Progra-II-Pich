@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InvSis.Business
 {
-    class ClaveProducto
+    public class ClaveProducto
     {
         /// <summary>
         /// Valida que el código de producto cumpla con el formato EAN-13

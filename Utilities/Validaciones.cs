@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace InvSis.Utilities
 {
-    internal class Validaciones
+    public class Validaciones
     {
         public static bool EsCorreoValido(string correo)
         {

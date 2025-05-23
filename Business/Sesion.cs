@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InvSis.Business
 {
-    class Sesion
+    public class Sesion
     {
         public static bool EsAdministrador { get; set; }
         public static string UsuarioActual { get; set; }

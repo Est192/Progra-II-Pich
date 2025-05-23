@@ -3,7 +3,7 @@ using InvSis.Views;
 
 namespace InvSis
 {
-    internal static class Program
+    public static class Program
     {
         [STAThread]
         static void Main()

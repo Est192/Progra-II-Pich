@@ -7,7 +7,7 @@ using InvSis.Utilities;
 
 namespace InvSis.Business
 {
-    internal class UsuarioNegocio
+    public class UsuarioNegocio
     {
         public static bool EsFormatoValido(string correo)
         {
