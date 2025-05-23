@@ -45,7 +45,6 @@
             lblEstatus = new Label();
             txtContraseña = new TextBox();
             lblContraseña = new Label();
-            cbRol = new ComboBox();
             lblRol = new Label();
             txtNickname = new TextBox();
             lblNickname = new Label();
@@ -63,12 +62,17 @@
             lblCambioEstatus = new Label();
             txtCambioContraseña = new TextBox();
             lblCambioContraseña = new Label();
-            cbCambioRol = new ComboBox();
             lblCambioRol = new Label();
             txtCambioNickname = new TextBox();
             lblCambioNickname = new Label();
             lblSelección = new Label();
             toolTipPersona = new ToolTip(components);
+            dgvSeleccionRol = new DataGridView();
+            NombrePermiso = new DataGridViewTextBoxColumn();
+            EstatusPermiso = new DataGridViewTextBoxColumn();
+            dgvCambioRol = new DataGridView();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)scUsuarios).BeginInit();
             scUsuarios.Panel1.SuspendLayout();
             scUsuarios.Panel2.SuspendLayout();
@@ -77,6 +81,8 @@
             ((System.ComponentModel.ISupportInitialize)dgvSeleccionPersona).BeginInit();
             gbEdicionOEliminacion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSeleccionUsuario).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvSeleccionRol).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvCambioRol).BeginInit();
             SuspendLayout();
             // 
             // lblTitulo
@@ -107,13 +113,14 @@
             // scUsuarios.Panel2
             // 
             scUsuarios.Panel2.Controls.Add(gbEdicionOEliminacion);
-            scUsuarios.Size = new Size(1505, 698);
+            scUsuarios.Size = new Size(1505, 866);
             scUsuarios.SplitterDistance = 723;
             scUsuarios.TabIndex = 1;
             // 
             // gbAlta
             // 
             gbAlta.BackColor = Color.FromArgb(230, 242, 248);
+            gbAlta.Controls.Add(dgvSeleccionRol);
             gbAlta.Controls.Add(dgvSeleccionPersona);
             gbAlta.Controls.Add(btAlta);
             gbAlta.Controls.Add(btRegistroPersona);
@@ -123,7 +130,6 @@
             gbAlta.Controls.Add(lblEstatus);
             gbAlta.Controls.Add(txtContraseña);
             gbAlta.Controls.Add(lblContraseña);
-            gbAlta.Controls.Add(cbRol);
             gbAlta.Controls.Add(lblRol);
             gbAlta.Controls.Add(txtNickname);
             gbAlta.Controls.Add(lblNickname);
@@ -133,7 +139,7 @@
             gbAlta.Margin = new Padding(3, 2, 3, 2);
             gbAlta.Name = "gbAlta";
             gbAlta.Padding = new Padding(3, 2, 3, 2);
-            gbAlta.Size = new Size(723, 696);
+            gbAlta.Size = new Size(723, 864);
             gbAlta.TabIndex = 0;
             gbAlta.TabStop = false;
             gbAlta.Text = "Alta de usuario";
@@ -144,7 +150,7 @@
             dgvSeleccionPersona.Columns.AddRange(new DataGridViewColumn[] { Nombre, Edad, Sexo, Nacionalidad });
             dgvSeleccionPersona.Location = new Point(12, 59);
             dgvSeleccionPersona.Name = "dgvSeleccionPersona";
-            dgvSeleccionPersona.Size = new Size(705, 432);
+            dgvSeleccionPersona.Size = new Size(705, 265);
             dgvSeleccionPersona.TabIndex = 27;
             // 
             // Nombre
@@ -175,7 +181,7 @@
             // 
             btAlta.AutoSize = true;
             btAlta.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btAlta.Location = new Point(563, 650);
+            btAlta.Location = new Point(573, 565);
             btAlta.Margin = new Padding(3, 2, 3, 2);
             btAlta.Name = "btAlta";
             btAlta.Size = new Size(85, 30);
@@ -212,7 +218,7 @@
             // 
             lblDatosObligatorios.AutoSize = true;
             lblDatosObligatorios.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblDatosObligatorios.Location = new Point(398, 656);
+            lblDatosObligatorios.Location = new Point(396, 571);
             lblDatosObligatorios.Name = "lblDatosObligatorios";
             lblDatosObligatorios.Size = new Size(131, 19);
             lblDatosObligatorios.TabIndex = 8;
@@ -222,7 +228,7 @@
             // 
             cbEstatus.DropDownStyle = ComboBoxStyle.DropDownList;
             cbEstatus.FormattingEnabled = true;
-            cbEstatus.Location = new Point(386, 601);
+            cbEstatus.Location = new Point(396, 505);
             cbEstatus.Margin = new Padding(3, 2, 3, 2);
             cbEstatus.Name = "cbEstatus";
             cbEstatus.Size = new Size(262, 27);
@@ -232,7 +238,7 @@
             // 
             lblEstatus.AutoSize = true;
             lblEstatus.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblEstatus.Location = new Point(386, 581);
+            lblEstatus.Location = new Point(396, 475);
             lblEstatus.Name = "lblEstatus";
             lblEstatus.Size = new Size(63, 19);
             lblEstatus.TabIndex = 6;
@@ -240,7 +246,7 @@
             // 
             // txtContraseña
             // 
-            txtContraseña.Location = new Point(386, 538);
+            txtContraseña.Location = new Point(396, 434);
             txtContraseña.Margin = new Padding(3, 2, 3, 2);
             txtContraseña.MaxLength = 20;
             txtContraseña.Name = "txtContraseña";
@@ -252,36 +258,27 @@
             lblContraseña.AutoSize = true;
             lblContraseña.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblContraseña.ForeColor = Color.MediumPurple;
-            lblContraseña.Location = new Point(386, 518);
+            lblContraseña.Location = new Point(396, 413);
             lblContraseña.Name = "lblContraseña";
             lblContraseña.Size = new Size(89, 19);
             lblContraseña.TabIndex = 4;
             lblContraseña.Text = "Contraseña *";
-            // 
-            // cbRol
-            // 
-            cbRol.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbRol.FormattingEnabled = true;
-            cbRol.Location = new Point(25, 601);
-            cbRol.Margin = new Padding(3, 2, 3, 2);
-            cbRol.Name = "cbRol";
-            cbRol.Size = new Size(262, 27);
-            cbRol.TabIndex = 3;
             // 
             // lblRol
             // 
             lblRol.AutoSize = true;
             lblRol.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblRol.ForeColor = Color.MediumPurple;
-            lblRol.Location = new Point(25, 581);
+            lblRol.Location = new Point(12, 327);
             lblRol.Name = "lblRol";
-            lblRol.Size = new Size(38, 19);
+            lblRol.Size = new Size(96, 19);
             lblRol.TabIndex = 2;
-            lblRol.Text = "Rol *";
+            lblRol.Text = "Seleccionar rol";
+            lblRol.Click += lblRol_Click;
             // 
             // txtNickname
             // 
-            txtNickname.Location = new Point(25, 538);
+            txtNickname.Location = new Point(396, 371);
             txtNickname.Margin = new Padding(3, 2, 3, 2);
             txtNickname.MaxLength = 20;
             txtNickname.Name = "txtNickname";
@@ -293,7 +290,7 @@
             lblNickname.AutoSize = true;
             lblNickname.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblNickname.ForeColor = Color.MediumPurple;
-            lblNickname.Location = new Point(25, 519);
+            lblNickname.Location = new Point(396, 346);
             lblNickname.Name = "lblNickname";
             lblNickname.Size = new Size(79, 19);
             lblNickname.TabIndex = 0;
@@ -303,6 +300,7 @@
             // 
             gbEdicionOEliminacion.AutoSize = true;
             gbEdicionOEliminacion.BackColor = Color.FromArgb(230, 242, 248);
+            gbEdicionOEliminacion.Controls.Add(dgvCambioRol);
             gbEdicionOEliminacion.Controls.Add(dgvSeleccionUsuario);
             gbEdicionOEliminacion.Controls.Add(btEliminar);
             gbEdicionOEliminacion.Controls.Add(btGuardarCambios);
@@ -311,7 +309,6 @@
             gbEdicionOEliminacion.Controls.Add(lblCambioEstatus);
             gbEdicionOEliminacion.Controls.Add(txtCambioContraseña);
             gbEdicionOEliminacion.Controls.Add(lblCambioContraseña);
-            gbEdicionOEliminacion.Controls.Add(cbCambioRol);
             gbEdicionOEliminacion.Controls.Add(lblCambioRol);
             gbEdicionOEliminacion.Controls.Add(txtCambioNickname);
             gbEdicionOEliminacion.Controls.Add(lblCambioNickname);
@@ -321,7 +318,7 @@
             gbEdicionOEliminacion.Margin = new Padding(3, 2, 3, 2);
             gbEdicionOEliminacion.Name = "gbEdicionOEliminacion";
             gbEdicionOEliminacion.Padding = new Padding(3, 2, 3, 2);
-            gbEdicionOEliminacion.Size = new Size(772, 698);
+            gbEdicionOEliminacion.Size = new Size(772, 879);
             gbEdicionOEliminacion.TabIndex = 0;
             gbEdicionOEliminacion.TabStop = false;
             gbEdicionOEliminacion.Text = "Edición o eliminación de usuario";
@@ -332,7 +329,7 @@
             dgvSeleccionUsuario.Columns.AddRange(new DataGridViewColumn[] { Rol, Nickname, Contraseña, Estatus, Persona });
             dgvSeleccionUsuario.Location = new Point(6, 59);
             dgvSeleccionUsuario.Name = "dgvSeleccionUsuario";
-            dgvSeleccionUsuario.Size = new Size(757, 397);
+            dgvSeleccionUsuario.Size = new Size(757, 287);
             dgvSeleccionUsuario.TabIndex = 25;
             // 
             // Rol
@@ -370,7 +367,7 @@
             // 
             btEliminar.AutoSize = true;
             btEliminar.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btEliminar.Location = new Point(613, 461);
+            btEliminar.Location = new Point(616, 351);
             btEliminar.Margin = new Padding(3, 2, 3, 2);
             btEliminar.Name = "btEliminar";
             btEliminar.Size = new Size(150, 30);
@@ -426,7 +423,7 @@
             // 
             // txtCambioContraseña
             // 
-            txtCambioContraseña.Location = new Point(41, 648);
+            txtCambioContraseña.Location = new Point(392, 467);
             txtCambioContraseña.Margin = new Padding(2, 1, 2, 1);
             txtCambioContraseña.MaxLength = 20;
             txtCambioContraseña.Name = "txtCambioContraseña";
@@ -437,27 +434,17 @@
             // 
             lblCambioContraseña.AutoSize = true;
             lblCambioContraseña.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCambioContraseña.Location = new Point(41, 629);
+            lblCambioContraseña.Location = new Point(392, 434);
             lblCambioContraseña.Name = "lblCambioContraseña";
             lblCambioContraseña.Size = new Size(146, 19);
             lblCambioContraseña.TabIndex = 19;
             lblCambioContraseña.Text = "Cambio de contraseña";
             // 
-            // cbCambioRol
-            // 
-            cbCambioRol.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbCambioRol.FormattingEnabled = true;
-            cbCambioRol.Location = new Point(41, 584);
-            cbCambioRol.Margin = new Padding(3, 2, 3, 2);
-            cbCambioRol.Name = "cbCambioRol";
-            cbCambioRol.Size = new Size(262, 27);
-            cbCambioRol.TabIndex = 18;
-            // 
             // lblCambioRol
             // 
             lblCambioRol.AutoSize = true;
             lblCambioRol.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCambioRol.Location = new Point(41, 564);
+            lblCambioRol.Location = new Point(6, 362);
             lblCambioRol.Name = "lblCambioRol";
             lblCambioRol.Size = new Size(95, 19);
             lblCambioRol.TabIndex = 17;
@@ -465,7 +452,7 @@
             // 
             // txtCambioNickname
             // 
-            txtCambioNickname.Location = new Point(41, 521);
+            txtCambioNickname.Location = new Point(392, 391);
             txtCambioNickname.Margin = new Padding(2, 1, 2, 1);
             txtCambioNickname.MaxLength = 20;
             txtCambioNickname.Name = "txtCambioNickname";
@@ -476,7 +463,7 @@
             // 
             lblCambioNickname.AutoSize = true;
             lblCambioNickname.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            lblCambioNickname.Location = new Point(41, 502);
+            lblCambioNickname.Location = new Point(392, 371);
             lblCambioNickname.Name = "lblCambioNickname";
             lblCambioNickname.Size = new Size(137, 19);
             lblCambioNickname.TabIndex = 15;
@@ -492,11 +479,65 @@
             lblSelección.TabIndex = 14;
             lblSelección.Text = "Selección de usuario *";
             // 
+            // dgvSeleccionRol
+            // 
+            dgvSeleccionRol.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvSeleccionRol.Columns.AddRange(new DataGridViewColumn[] { NombrePermiso, EstatusPermiso });
+            dgvSeleccionRol.Location = new Point(12, 351);
+            dgvSeleccionRol.Name = "dgvSeleccionRol";
+            dgvSeleccionRol.RowHeadersWidth = 51;
+            dgvSeleccionRol.Size = new Size(354, 503);
+            dgvSeleccionRol.TabIndex = 28;
+            // 
+            // NombrePermiso
+            // 
+            NombrePermiso.DataPropertyName = "NombreRol";
+            NombrePermiso.HeaderText = "Nombre";
+            NombrePermiso.MinimumWidth = 150;
+            NombrePermiso.Name = "NombrePermiso";
+            NombrePermiso.Resizable = DataGridViewTriState.False;
+            NombrePermiso.Width = 150;
+            // 
+            // EstatusPermiso
+            // 
+            EstatusPermiso.DataPropertyName = "Estatus";
+            EstatusPermiso.HeaderText = "Estatus";
+            EstatusPermiso.MinimumWidth = 150;
+            EstatusPermiso.Name = "EstatusPermiso";
+            EstatusPermiso.Width = 150;
+            // 
+            // dgvCambioRol
+            // 
+            dgvCambioRol.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvCambioRol.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2 });
+            dgvCambioRol.Location = new Point(6, 384);
+            dgvCambioRol.Name = "dgvCambioRol";
+            dgvCambioRol.RowHeadersWidth = 51;
+            dgvCambioRol.Size = new Size(354, 470);
+            dgvCambioRol.TabIndex = 29;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewTextBoxColumn1.DataPropertyName = "NombreRol";
+            dataGridViewTextBoxColumn1.HeaderText = "Nombre";
+            dataGridViewTextBoxColumn1.MinimumWidth = 150;
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.Resizable = DataGridViewTriState.False;
+            dataGridViewTextBoxColumn1.Width = 150;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            dataGridViewTextBoxColumn2.DataPropertyName = "Estatus";
+            dataGridViewTextBoxColumn2.HeaderText = "Estatus";
+            dataGridViewTextBoxColumn2.MinimumWidth = 150;
+            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            dataGridViewTextBoxColumn2.Width = 150;
+            // 
             // frmUsuarios
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1505, 731);
+            ClientSize = new Size(1505, 899);
             Controls.Add(scUsuarios);
             Controls.Add(lblTitulo);
             Font = new Font("Segoe UI", 9F, FontStyle.Bold);
@@ -515,6 +556,8 @@
             gbEdicionOEliminacion.ResumeLayout(false);
             gbEdicionOEliminacion.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSeleccionUsuario).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvSeleccionRol).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvCambioRol).EndInit();
             ResumeLayout(false);
         }
 
@@ -527,7 +570,6 @@
         private Label lblNickname;
         private Label lblRol;
         private TextBox txtNickname;
-        private ComboBox cbRol;
         private ComboBox cbEstatus;
         private Label lblEstatus;
         private TextBox txtContraseña;
@@ -545,7 +587,6 @@
         private Label lblCambioEstatus;
         private TextBox txtCambioContraseña;
         private Label lblCambioContraseña;
-        private ComboBox cbCambioRol;
         private Label lblCambioRol;
         private TextBox txtCambioNickname;
         private Label lblCambioNickname;
@@ -563,5 +604,11 @@
         private DataGridViewTextBoxColumn Contraseña;
         private DataGridViewTextBoxColumn Estatus;
         private DataGridViewTextBoxColumn Persona;
+        private DataGridView dgvSeleccionRol;
+        private DataGridViewTextBoxColumn NombrePermiso;
+        private DataGridViewTextBoxColumn EstatusPermiso;
+        private DataGridView dgvCambioRol;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
     }
 }

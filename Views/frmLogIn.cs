@@ -8,15 +8,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using InventariosCore.Business;
+using InventariosCore.Controllers;
 using InvSis.Views;
 
 namespace InvSis.Views
 {
     public partial class frmLogIn : Form
     {
+        private UsuariosController _usuariosController;
+
         public frmLogIn()
         {
             InitializeComponent();
+            _usuariosController = new UsuariosController();
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -26,46 +30,53 @@ namespace InvSis.Views
 
         private void btnIniciarSesion_Click(object sender, EventArgs e)
         {
-            // Validaciones 
-
-            // Validar que el campo usuario no este vacio
             if (string.IsNullOrWhiteSpace(txtUsuario.Text))
             {
-                MessageBox.Show("El campo de usuario no puede de estar vacio. ", "Informacion del sistema", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("El campo de usuario no puede estar vacío.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Validar que el campo contraseña no este vacio
             if (string.IsNullOrWhiteSpace(txtContraseña.Text))
             {
-                MessageBox.Show("El campo de contraseña no puede de estar vacio. ", "Informacion del sistema", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("El campo de contraseña no puede estar vacío.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (txtUsuario.Text.Trim().ToLower() == "admin")
+            string usuarioIngresado = txtUsuario.Text.Trim();
+            string contrasenaIngresada = txtContraseña.Text;
+
+            // Si es admin (especial)
+            if (usuarioIngresado.ToLower() == "admin")
             {
-                // Si es admin, permitir acceso sin validar formato
-                Sesion.IniciarSesion(txtUsuario.Text);
-                MessageBox.Show("Ha iniciado sesion como administrador. ", "Informacion del sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Sesion.IniciarSesion(usuarioIngresado);
+                MessageBox.Show("Ha iniciado sesión como administrador.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.DialogResult = DialogResult.OK;
                 this.Close();
                 return;
             }
 
-            // Validar que el campo usuario tenga un formato correcto
-
-            if (!UsuarioNegocio.EsFormatoValido(txtUsuario.Text))
+            try
             {
-                MessageBox.Show("El campo usuario no tiene un formato correcto. ", "Informacion del sistema", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                var usuario = _usuariosController.AutenticarUsuario(usuarioIngresado, contrasenaIngresada);
+
+                if (usuario == null)
+                {
+                    MessageBox.Show("Usuario o contraseña incorrectos, o el usuario está inactivo.", "Error de autenticación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Guardar en Sesion
+                Sesion.IniciarSesion(usuario.Nickname);
+
+                MessageBox.Show($"Bienvenido {usuario.Nickname}.", "Inicio de sesión exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                this.DialogResult = DialogResult.OK;
+                this.Close();
             }
-            Sesion.IniciarSesion(txtUsuario.Text);
-            MessageBox.Show("Ha iniciado sesion. ", "Informacion del sistema", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            
-                    
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-            
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error inesperado durante la autenticación: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
         }
     }
 }

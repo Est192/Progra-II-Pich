@@ -17,13 +17,17 @@ namespace InvSis.Views
 
             PoblarComboEstatus(cbEstatus);
             PoblarComboEstatus(cbCambioEstatus);
+
+            CargarPersonasEnDataGridView();
+            CargarRolesEnDataGridView();
+            CargarUsuariosEnGrid();
+
+            dgvSeleccionUsuario.SelectionChanged += DgvSeleccionUsuario_SelectionChanged;
         }
 
         private void frmUsuarios_Load(object sender, EventArgs e)
         {
             CargarPersonasEnDataGridView();
-            CargarRolesEnCombo(cbRol);
-            CargarRolesEnCombo(cbCambioRol);
             CargarUsuariosEnGrid();
         }
 
@@ -68,14 +72,14 @@ namespace InvSis.Views
 
                 foreach (var p in personas)
                 {
-                    int filaIndex = dgvSeleccionPersona.Rows.Add(
+                    int index = dgvSeleccionPersona.Rows.Add(
                         p.NombreCompleto,
                         p.Edad.HasValue ? p.Edad.Value.ToString() : "",
                         p.Sexo,
                         p.Nacionalidad
                     );
-
-                    dgvSeleccionPersona.Rows[filaIndex].Tag = p.IdPersona;
+                    // Guardamos el IdPersona en Tag para recuperarlo luego
+                    dgvSeleccionPersona.Rows[index].Tag = p.IdPersona;
                 }
             }
             catch (Exception ex)
@@ -84,24 +88,47 @@ namespace InvSis.Views
             }
         }
 
+        private void CargarRolesEnDataGridView()
+        {
+            try
+            {
+                dgvSeleccionRol.Rows.Clear();
+                var roles = _usuarioController.ObtenerTodosLosRoles();
+
+                foreach (var rol in roles)
+                {
+                    int index = dgvSeleccionRol.Rows.Add(
+                        rol.NombreRol,
+                        rol.Estatus == 1 ? "Activo" : "Inactivo"
+                    );
+                    dgvSeleccionRol.Rows[index].Tag = rol.IdRol;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar roles: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void CargarUsuariosEnGrid()
         {
             try
             {
                 dgvSeleccionUsuario.Rows.Clear();
-                var usuarios = _usuarioController.ObtenerUsuarios();
+
+                // Pasa false para obtener activos e inactivos
+                var usuarios = _usuarioController.ObtenerUsuarios(soloActivos: false);
 
                 foreach (var u in usuarios)
                 {
-                    int filaIndex = dgvSeleccionUsuario.Rows.Add(
+                    int index = dgvSeleccionUsuario.Rows.Add(
                         u.Rol.NombreRol,
                         u.Nickname,
                         "********",  // No mostrar contraseña real
-                        u.Estatus == 1 ? "Activo" : "Inactivo",
+                        u.Estatus == 1 ? "Activo" : u.Estatus == 0 ? "Inactivo" : "Otro",
                         u.Persona.NombreCompleto
                     );
-
-                    dgvSeleccionUsuario.Rows[filaIndex].Tag = u.IdUsuario;
+                    dgvSeleccionUsuario.Rows[index].Tag = u.IdUsuario;
                 }
             }
             catch (Exception ex)
@@ -114,7 +141,6 @@ namespace InvSis.Views
         {
             return string.IsNullOrWhiteSpace(txtNickname.Text)
                 || string.IsNullOrWhiteSpace(txtContraseña.Text)
-                || cbRol.SelectedIndex == -1
                 || cbEstatus.SelectedIndex == -1
                 || dgvSeleccionPersona.SelectedRows.Count == 0;
         }
@@ -139,30 +165,47 @@ namespace InvSis.Views
         {
             txtNickname.Clear();
             txtContraseña.Clear();
-            cbRol.SelectedIndex = -1;
             cbEstatus.SelectedValue = 1;
+
             dgvSeleccionPersona.ClearSelection();
+            dgvSeleccionRol.ClearSelection();
         }
 
         private void btAlta_Click(object sender, EventArgs e)
         {
-            if (DatosVacios())
+            // Validar campos
+            if (string.IsNullOrWhiteSpace(txtNickname.Text) ||
+                string.IsNullOrWhiteSpace(txtContraseña.Text) ||
+                cbEstatus.SelectedIndex == -1)
             {
-                MessageBox.Show("Por favor, llene todos los campos.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Por favor, llene todos los campos obligatorios.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (dgvSeleccionPersona.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Debe seleccionar una persona.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (dgvSeleccionRol.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Debe seleccionar un rol.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
-                int idPersona = ObtenerIdPersonaSeleccionada();
+                int idPersona = (int)dgvSeleccionPersona.SelectedRows[0].Tag;
+                int idRol = (int)dgvSeleccionRol.SelectedRows[0].Tag;
 
                 var usuario = new Usuario
                 {
                     Nickname = txtNickname.Text.Trim(),
                     Contraseña = txtContraseña.Text.Trim(),
-                    IdRol = (int)cbRol.SelectedValue,
+                    Estatus = (int)cbEstatus.SelectedValue,
                     IdPersona = idPersona,
-                    Estatus = (int)cbEstatus.SelectedValue
+                    IdRol = idRol
                 };
 
                 int nuevoId = _usuarioController.InsertarUsuario(usuario);
@@ -186,28 +229,49 @@ namespace InvSis.Views
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(txtCambioNickname.Text) ||
+                string.IsNullOrWhiteSpace(txtCambioContraseña.Text) ||
+                cbCambioEstatus.SelectedIndex == -1)
+            {
+                MessageBox.Show("Complete todos los campos de edición.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (dgvCambioRol.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Seleccione un nuevo rol para el usuario.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             try
             {
-                int idUsuario = ObtenerIdUsuarioSeleccionado();
-                var usuarioExistente = _usuarioController.ObtenerUsuarioPorId(idUsuario);
+                int idUsuario = (int)dgvSeleccionUsuario.SelectedRows[0].Tag;
+                var usuario = _usuarioController.ObtenerUsuarioPorId(idUsuario);
 
-                if (usuarioExistente == null)
+                if (usuario == null)
                 {
                     MessageBox.Show("Usuario no encontrado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                usuarioExistente.Nickname = txtCambioNickname.Text.Trim();
-                usuarioExistente.Contraseña = txtCambioContraseña.Text.Trim();
-                usuarioExistente.IdRol = (int)cbCambioRol.SelectedValue;
-                usuarioExistente.Estatus = (int)cbCambioEstatus.SelectedValue;
+                // Actualizar datos con los controles
+                usuario.Nickname = txtCambioNickname.Text.Trim();
+                usuario.Contraseña = txtCambioContraseña.Text.Trim();
 
-                bool resultado = _usuarioController.ActualizarUsuario(usuarioExistente);
+                // Forzar estatus activo
+                usuario.Estatus = 1;
+
+                // Obtener IdRol del rol seleccionado en dgvCambioRol
+                int nuevoIdRol = (int)dgvCambioRol.SelectedRows[0].Tag;
+                usuario.IdRol = nuevoIdRol;
+
+                bool resultado = _usuarioController.ActualizarUsuario(usuario);
 
                 if (resultado)
                 {
-                    MessageBox.Show("Usuario editado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Usuario actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     CargarUsuariosEnGrid();
+                    LimpiarCamposEdicionUsuario();
                 }
                 else
                 {
@@ -216,8 +280,9 @@ namespace InvSis.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al editar usuario: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error al actualizar usuario: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
         }
 
         private void btEliminar_Click(object sender, EventArgs e)
@@ -228,21 +293,23 @@ namespace InvSis.Views
                 return;
             }
 
-            var confirmResult = MessageBox.Show("¿Está seguro que desea eliminar el usuario seleccionado?", "Confirmar eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var confirmResult = MessageBox.Show("¿Está seguro que desea eliminar (desactivar) el usuario seleccionado?",
+                                                "Confirmar eliminación",
+                                                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (confirmResult != DialogResult.Yes)
                 return;
 
             try
             {
-                int idUsuario = ObtenerIdUsuarioSeleccionado();
-
+                int idUsuario = (int)dgvSeleccionUsuario.SelectedRows[0].Tag;
                 bool resultado = _usuarioController.EliminarUsuario(idUsuario);
 
                 if (resultado)
                 {
-                    MessageBox.Show("Usuario eliminado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Usuario desactivado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     CargarUsuariosEnGrid();
+                    LimpiarCamposEdicionUsuario();
                 }
                 else
                 {
@@ -263,5 +330,104 @@ namespace InvSis.Views
             // Refrescar personas tras posible nueva
             CargarPersonasEnDataGridView();
         }
+
+        private void lblRol_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void DgvSeleccionPersona_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvSeleccionPersona.SelectedRows.Count == 0)
+            {
+                // No hay selección, limpia campos si quieres
+                // Por ejemplo: txtNickname.Clear();
+                return;
+            }
+
+            // Obtener datos de la persona seleccionada
+            var fila = dgvSeleccionPersona.SelectedRows[0];
+
+            // Si quieres mostrar el nombre completo en un label o textbox, puedes hacerlo aquí:
+            string nombrePersona = fila.Cells["Nombre"].Value?.ToString() ?? "";
+
+            // Ejemplo: podrías mostrarlo en una etiqueta o simplemente usarlo para algo
+            // lblPersonaSeleccionada.Text = nombrePersona;
+
+            // Si necesitas hacer algo más, ponlo aquí
+        }
+
+        private void DgvSeleccionRol_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvSeleccionRol.SelectedRows.Count == 0)
+            {
+                // Limpia o deshabilita controles si es necesario
+                return;
+            }
+
+            // Obtener datos del rol seleccionado
+            var fila = dgvSeleccionRol.SelectedRows[0];
+
+            string nombreRol = fila.Cells["NombrePermiso"].Value?.ToString() ?? "";
+
+            // Ejemplo: mostrar nombre en un label o textbox
+            // lblRolSeleccionado.Text = nombreRol;
+
+            // Más acciones según lo que necesites hacer
+        }
+
+        private void DgvSeleccionUsuario_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvSeleccionUsuario.SelectedRows.Count == 0)
+            {
+                LimpiarCamposEdicionUsuario();
+                return;
+            }
+
+            int idUsuario = (int)dgvSeleccionUsuario.SelectedRows[0].Tag;
+            var usuario = _usuarioController.ObtenerUsuarioPorId(idUsuario);
+
+            if (usuario == null)
+            {
+                LimpiarCamposEdicionUsuario();
+                return;
+            }
+
+            // Llenar los campos de edición
+            txtCambioNickname.Text = usuario.Nickname;
+            txtCambioContraseña.Text = usuario.Contraseña;
+            cbCambioEstatus.SelectedValue = usuario.Estatus;
+
+            // Cargar roles excepto el actual en dgvCambioRol
+            CargarRolesExceptoActual(usuario.IdRol);
+        }
+
+        private void LimpiarCamposEdicionUsuario()
+        {
+            txtCambioNickname.Clear();
+            txtCambioContraseña.Clear();
+            cbCambioEstatus.SelectedIndex = -1;
+            dgvCambioRol.Rows.Clear();
+        }
+
+        private void CargarRolesExceptoActual(int idRolActual)
+        {
+            dgvCambioRol.Rows.Clear();
+
+            var roles = _usuarioController.ObtenerTodosLosRoles();
+
+            foreach (var rol in roles)
+            {
+                if (rol.IdRol == idRolActual)
+                    continue;  // Salta el rol actual
+
+                int index = dgvCambioRol.Rows.Add(rol.NombreRol, rol.Estatus == 1 ? "Activo" : "Inactivo");
+                dgvCambioRol.Rows[index].Tag = rol.IdRol;
+            }
+        }
+
+
+
     }
 }
