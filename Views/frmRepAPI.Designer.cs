@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             lblConsulta = new Label();
             txtBusID = new TextBox();
             lblClave = new Label();
@@ -43,13 +43,13 @@
             pnlTitulo = new Panel();
             lblTitulo = new Label();
             dgvProductos = new DataGridView();
+            btnResumen = new Button();
             colClave = new DataGridViewTextBoxColumn();
             colNombre = new DataGridViewTextBoxColumn();
             colCosto = new DataGridViewTextBoxColumn();
             colStock = new DataGridViewTextBoxColumn();
             colImpuesto = new DataGridViewTextBoxColumn();
             colEstatus = new DataGridViewTextBoxColumn();
-            btnResumen = new Button();
             pnlTitulo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProductos).BeginInit();
             SuspendLayout();
@@ -78,7 +78,6 @@
             lblClave.Size = new Size(111, 15);
             lblClave.TabIndex = 4;
             lblClave.Text = "Clave de producto:";
-            lblClave.Click += label1_Click;
             // 
             // btnActualizar
             // 
@@ -89,7 +88,6 @@
             btnActualizar.TabIndex = 6;
             btnActualizar.Text = "Actualizar existencias";
             btnActualizar.UseVisualStyleBackColor = true;
-            btnActualizar.Click += btnEnviar_Click;
             // 
             // btnBuscar
             // 
@@ -133,28 +131,28 @@
             dgvProductos.AllowUserToDeleteRows = false;
             dgvProductos.AllowUserToResizeColumns = false;
             dgvProductos.AllowUserToResizeRows = false;
-            dataGridViewCellStyle8.BackColor = Color.FromArgb(250, 250, 250);
-            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(250, 250, 250);
+            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvProductos.Anchor = AnchorStyles.None;
             dgvProductos.BackgroundColor = Color.FromArgb(42, 34, 58);
-            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = Color.FromArgb(159, 122, 234);
-            dataGridViewCellStyle9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle9.ForeColor = Color.MediumPurple;
-            dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.True;
-            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(159, 122, 234);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle2.ForeColor = Color.MediumPurple;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.Columns.AddRange(new DataGridViewColumn[] { colClave, colNombre, colCosto, colStock, colImpuesto, colEstatus });
-            dataGridViewCellStyle14.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle14.BackColor = SystemColors.Window;
-            dataGridViewCellStyle14.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle14.ForeColor = Color.FromArgb(159, 122, 234);
-            dataGridViewCellStyle14.SelectionBackColor = Color.FromArgb(232, 218, 255);
-            dataGridViewCellStyle14.SelectionForeColor = Color.MediumPurple;
-            dataGridViewCellStyle14.WrapMode = DataGridViewTriState.False;
-            dgvProductos.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = SystemColors.Window;
+            dataGridViewCellStyle7.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle7.ForeColor = Color.FromArgb(159, 122, 234);
+            dataGridViewCellStyle7.SelectionBackColor = Color.FromArgb(232, 218, 255);
+            dataGridViewCellStyle7.SelectionForeColor = Color.MediumPurple;
+            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.False;
+            dgvProductos.DefaultCellStyle = dataGridViewCellStyle7;
             dgvProductos.GridColor = SystemColors.Info;
             dgvProductos.ImeMode = ImeMode.Disable;
             dgvProductos.Location = new Point(29, 141);
@@ -164,61 +162,6 @@
             dgvProductos.RowHeadersWidth = 62;
             dgvProductos.Size = new Size(693, 399);
             dgvProductos.TabIndex = 16;
-            // 
-            // colClave
-            // 
-            dataGridViewCellStyle10.BackColor = Color.FromArgb(74, 60, 96);
-            dataGridViewCellStyle10.ForeColor = Color.White;
-            colClave.DefaultCellStyle = dataGridViewCellStyle10;
-            colClave.HeaderText = "Clave";
-            colClave.MinimumWidth = 8;
-            colClave.Name = "colClave";
-            colClave.ReadOnly = true;
-            colClave.Width = 120;
-            // 
-            // colNombre
-            // 
-            dataGridViewCellStyle11.BackColor = Color.FromArgb(74, 60, 96);
-            dataGridViewCellStyle11.ForeColor = Color.White;
-            colNombre.DefaultCellStyle = dataGridViewCellStyle11;
-            colNombre.HeaderText = "Nombre";
-            colNombre.MinimumWidth = 8;
-            colNombre.Name = "colNombre";
-            colNombre.ReadOnly = true;
-            colNombre.Width = 140;
-            // 
-            // colCosto
-            // 
-            colCosto.HeaderText = "Costo unitario";
-            colCosto.Name = "colCosto";
-            colCosto.ReadOnly = true;
-            // 
-            // colStock
-            // 
-            dataGridViewCellStyle12.BackColor = Color.FromArgb(74, 60, 96);
-            dataGridViewCellStyle12.ForeColor = Color.White;
-            colStock.DefaultCellStyle = dataGridViewCellStyle12;
-            colStock.HeaderText = "Stock";
-            colStock.MinimumWidth = 8;
-            colStock.Name = "colStock";
-            colStock.ReadOnly = true;
-            // 
-            // colImpuesto
-            // 
-            colImpuesto.HeaderText = "Impuesto";
-            colImpuesto.Name = "colImpuesto";
-            colImpuesto.ReadOnly = true;
-            // 
-            // colEstatus
-            // 
-            dataGridViewCellStyle13.BackColor = Color.FromArgb(74, 60, 96);
-            dataGridViewCellStyle13.ForeColor = Color.White;
-            colEstatus.DefaultCellStyle = dataGridViewCellStyle13;
-            colEstatus.HeaderText = "Estatus";
-            colEstatus.MinimumWidth = 8;
-            colEstatus.Name = "colEstatus";
-            colEstatus.ReadOnly = true;
-            colEstatus.Width = 130;
             // 
             // btnResumen
             // 
@@ -230,6 +173,67 @@
             btnResumen.Text = "Resumen de ventas";
             btnResumen.UseVisualStyleBackColor = true;
             btnResumen.Click += btnResumen_Click;
+            // 
+            // colClave
+            // 
+            colClave.DataPropertyName = "Clave";
+            dataGridViewCellStyle3.BackColor = Color.FromArgb(74, 60, 96);
+            dataGridViewCellStyle3.ForeColor = Color.White;
+            colClave.DefaultCellStyle = dataGridViewCellStyle3;
+            colClave.HeaderText = "Clave";
+            colClave.MinimumWidth = 8;
+            colClave.Name = "colClave";
+            colClave.ReadOnly = true;
+            colClave.Width = 120;
+            // 
+            // colNombre
+            // 
+            colNombre.DataPropertyName = "Nombre";
+            dataGridViewCellStyle4.BackColor = Color.FromArgb(74, 60, 96);
+            dataGridViewCellStyle4.ForeColor = Color.White;
+            colNombre.DefaultCellStyle = dataGridViewCellStyle4;
+            colNombre.HeaderText = "Nombre";
+            colNombre.MinimumWidth = 8;
+            colNombre.Name = "colNombre";
+            colNombre.ReadOnly = true;
+            colNombre.Width = 140;
+            // 
+            // colCosto
+            // 
+            colCosto.DataPropertyName = "CostoUnitario";
+            colCosto.HeaderText = "Costo unitario";
+            colCosto.Name = "colCosto";
+            colCosto.ReadOnly = true;
+            // 
+            // colStock
+            // 
+            colStock.DataPropertyName = "Stock";
+            dataGridViewCellStyle5.BackColor = Color.FromArgb(74, 60, 96);
+            dataGridViewCellStyle5.ForeColor = Color.White;
+            colStock.DefaultCellStyle = dataGridViewCellStyle5;
+            colStock.HeaderText = "Stock";
+            colStock.MinimumWidth = 8;
+            colStock.Name = "colStock";
+            colStock.ReadOnly = true;
+            // 
+            // colImpuesto
+            // 
+            colImpuesto.DataPropertyName = "Impuesto";
+            colImpuesto.HeaderText = "Impuesto";
+            colImpuesto.Name = "colImpuesto";
+            colImpuesto.ReadOnly = true;
+            // 
+            // colEstatus
+            // 
+            colEstatus.DataPropertyName = "EstatusTexto";
+            dataGridViewCellStyle6.BackColor = Color.FromArgb(74, 60, 96);
+            dataGridViewCellStyle6.ForeColor = Color.White;
+            colEstatus.DefaultCellStyle = dataGridViewCellStyle6;
+            colEstatus.HeaderText = "Estatus";
+            colEstatus.MinimumWidth = 8;
+            colEstatus.Name = "colEstatus";
+            colEstatus.ReadOnly = true;
+            colEstatus.Width = 130;
             // 
             // frmRepAPI
             // 
@@ -264,12 +268,12 @@
         private System.Windows.Forms.Panel pnlTitulo;
         private System.Windows.Forms.Label lblTitulo;
         private DataGridView dgvProductos;
+        private Button btnResumen;
         private DataGridViewTextBoxColumn colClave;
         private DataGridViewTextBoxColumn colNombre;
         private DataGridViewTextBoxColumn colCosto;
         private DataGridViewTextBoxColumn colStock;
         private DataGridViewTextBoxColumn colImpuesto;
         private DataGridViewTextBoxColumn colEstatus;
-        private Button btnResumen;
     }
 }

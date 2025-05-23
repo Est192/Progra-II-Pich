@@ -14,6 +14,37 @@ namespace InvSis.Business
             _productosDA = new ProductosDataAccess();
         }
 
+        public List<API> ObtenerProductosParaAPI(string? clave = null)
+        {
+            List<Producto> productos;
+
+            if (string.IsNullOrEmpty(clave))
+                productos = _productosDA.ObtenerTodosLosProductos();
+            else
+            {
+                var producto = _productosDA.ObtenerProductoPorClave(clave);
+                productos = producto != null ? new List<Producto> { producto } : new List<Producto>();
+            }
+
+            var productosDto = new List<API>();
+
+            foreach (var p in productos)
+            {
+                productosDto.Add(new API
+                {
+                    Clave = p.Clave,
+                    Nombre = p.Nombre,
+                    CostoUnitario = p.Costo,
+                    Stock = p.Stock ?? 0,
+                    Impuesto = p.AplicaImpuesto && p.Impuesto != null ? p.Impuesto.CantidadImpuesto.ToString("0.##") : "N/A",
+                    Estatus = p.Estatus
+                });
+            }
+
+            return productosDto;
+        }
+
+
         public List<Producto> ObtenerProductos(string? categoria = null, int? estatus = null)
         {
             var productos = _productosDA.ObtenerTodosLosProductos();

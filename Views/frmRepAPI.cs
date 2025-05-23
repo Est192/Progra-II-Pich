@@ -1,90 +1,80 @@
 ﻿using InvSis.Business;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace InvSis.Views
 {
     public partial class frmRepAPI : Form
     {
+        private readonly ProductosController _productosController;
+
         public frmRepAPI()
         {
             InitializeComponent();
+            _productosController = new ProductosController();
+
+            // Desactivar auto generación de columnas para usar las del diseñador
+            dgvProductos.AutoGenerateColumns = false;
+
+            // Carga inicial
+            CargarProductos();
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void CargarProductos(string? claveFiltro = null)
         {
+            var productos = _productosController.ObtenerProductosParaAPI(claveFiltro);
 
+            dgvProductos.DataSource = null;
+            dgvProductos.DataSource = productos;
         }
 
         private void btnBuscar_Click(object sender, EventArgs e)
         {
-            // Verificar si ambos campos están vacíos
-            if (string.IsNullOrWhiteSpace(txtBusID.Text) && string.IsNullOrWhiteSpace(txtBusNom.Text))
+            string clave = txtBusID.Text.Trim();
+
+            if (string.IsNullOrEmpty(clave))
             {
-                MessageBox.Show("Debe ingresar al menos un criterio de búsqueda (código o nombre).",
+                MessageBox.Show("Ingrese una clave para filtrar los productos.",
                     "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtBusID.Focus();
                 return;
             }
 
-            // Si ambos campos tienen datos, priorizar búsqueda por clave
-            if (!string.IsNullOrWhiteSpace(txtBusID.Text) && !string.IsNullOrWhiteSpace(txtBusNom.Text))
+            try
             {
-                MessageBox.Show("Se ha detectado información en ambos campos. La búsqueda se realizará por clave.",
-                    "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+                CargarProductos(clave);
 
-            // Si hay clave, verificar que sea válida antes de buscar
-            if (!string.IsNullOrWhiteSpace(txtBusID.Text))
-            {
-                if (ClaveProducto.ValidarCodigoProducto(txtBusID.Text))
+                if (dgvProductos.Rows.Count == 0)
                 {
-                    // Realizar búsqueda por clave
-                    // BuscarPorClave(txtBusID.Text);
-                }
-                else
-                {
-                    MessageBox.Show("El código ingresado no es válido.",
-                        "Código inválido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    txtBusID.Focus();
-                    return;
+                    MessageBox.Show($"No se encontró ningún producto con clave '{clave}'.",
+                        "Resultado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
-            // Si no hay clave pero sí hay nombre, buscar por nombre
-            else if (!string.IsNullOrWhiteSpace(txtBusNom.Text))
+            catch (Exception ex)
             {
-                // Realizar búsqueda por nombre
-                // BuscarPorNombre(txtBusNom.Text);
+                MessageBox.Show($"Error al filtrar productos: {ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
 
-        private void btnEnviar_Click(object sender, EventArgs e)
+        private void btnActualizar_Click(object sender, EventArgs e)
         {
-            if (dgvProductos.SelectedRows.Count == 0)
+            try
             {
-                MessageBox.Show("Debe seleccionar un producto de la tabla para enviar la información.",
-                    "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                CargarProductos();
+                txtBusID.Clear();
             }
-            else
+            catch (Exception ex)
             {
-                // Validar que el Stock del producto sea mayor a 0
-                // Validar que el producto no esté en estado de baja
-                // Llamar al método de envío de información
+                MessageBox.Show($"Error al cargar productos: {ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
 
         private void btnResumen_Click(object sender, EventArgs e)
         {
-
+            MessageBox.Show("Funcionalidad pendiente: Resumen de ventas.",
+                "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

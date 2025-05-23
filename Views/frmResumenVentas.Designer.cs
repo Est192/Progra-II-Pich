@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
             dgvProductos = new DataGridView();
             pnlTitulo = new Panel();
             lblTitulo = new Label();
@@ -58,28 +58,28 @@
             dgvProductos.AllowUserToDeleteRows = false;
             dgvProductos.AllowUserToResizeColumns = false;
             dgvProductos.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(250, 250, 250);
-            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle8.BackColor = Color.FromArgb(250, 250, 250);
+            dgvProductos.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle8;
             dgvProductos.Anchor = AnchorStyles.None;
             dgvProductos.BackgroundColor = Color.FromArgb(42, 34, 58);
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(159, 122, 234);
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle2.ForeColor = Color.MediumPurple;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = Color.FromArgb(159, 122, 234);
+            dataGridViewCellStyle9.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle9.ForeColor = Color.MediumPurple;
+            dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.True;
+            dgvProductos.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
             dgvProductos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductos.Columns.AddRange(new DataGridViewColumn[] { colClave, colNombre, colFecha, colStock, colEstatus, colCantidad, colCosto });
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = SystemColors.Window;
-            dataGridViewCellStyle7.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            dataGridViewCellStyle7.ForeColor = Color.FromArgb(159, 122, 234);
-            dataGridViewCellStyle7.SelectionBackColor = Color.FromArgb(232, 218, 255);
-            dataGridViewCellStyle7.SelectionForeColor = Color.MediumPurple;
-            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.False;
-            dgvProductos.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle14.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle14.BackColor = SystemColors.Window;
+            dataGridViewCellStyle14.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            dataGridViewCellStyle14.ForeColor = Color.FromArgb(159, 122, 234);
+            dataGridViewCellStyle14.SelectionBackColor = Color.FromArgb(232, 218, 255);
+            dataGridViewCellStyle14.SelectionForeColor = Color.MediumPurple;
+            dataGridViewCellStyle14.WrapMode = DataGridViewTriState.False;
+            dgvProductos.DefaultCellStyle = dataGridViewCellStyle14;
             dgvProductos.GridColor = SystemColors.Info;
             dgvProductos.ImeMode = ImeMode.Disable;
             dgvProductos.Location = new Point(12, 112);
@@ -142,14 +142,14 @@
             // 
             txtBusID.Location = new Point(12, 68);
             txtBusID.Name = "txtBusID";
-            txtBusID.Size = new Size(165, 23);
+            txtBusID.Size = new Size(177, 23);
             txtBusID.TabIndex = 20;
             // 
             // colClave
             // 
-            dataGridViewCellStyle3.BackColor = Color.FromArgb(74, 60, 96);
-            dataGridViewCellStyle3.ForeColor = Color.White;
-            colClave.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle10.BackColor = Color.FromArgb(74, 60, 96);
+            dataGridViewCellStyle10.ForeColor = Color.White;
+            colClave.DefaultCellStyle = dataGridViewCellStyle10;
             colClave.HeaderText = "Clave";
             colClave.MinimumWidth = 8;
             colClave.Name = "colClave";
@@ -158,9 +158,9 @@
             // 
             // colNombre
             // 
-            dataGridViewCellStyle4.BackColor = Color.FromArgb(74, 60, 96);
-            dataGridViewCellStyle4.ForeColor = Color.White;
-            colNombre.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle11.BackColor = Color.FromArgb(74, 60, 96);
+            dataGridViewCellStyle11.ForeColor = Color.White;
+            colNombre.DefaultCellStyle = dataGridViewCellStyle11;
             colNombre.HeaderText = "Nombre";
             colNombre.MinimumWidth = 8;
             colNombre.Name = "colNombre";
@@ -176,9 +176,9 @@
             // 
             // colStock
             // 
-            dataGridViewCellStyle5.BackColor = Color.FromArgb(74, 60, 96);
-            dataGridViewCellStyle5.ForeColor = Color.White;
-            colStock.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle12.BackColor = Color.FromArgb(74, 60, 96);
+            dataGridViewCellStyle12.ForeColor = Color.White;
+            colStock.DefaultCellStyle = dataGridViewCellStyle12;
             colStock.HeaderText = "Cliente";
             colStock.MinimumWidth = 8;
             colStock.Name = "colStock";
@@ -187,9 +187,9 @@
             // 
             // colEstatus
             // 
-            dataGridViewCellStyle6.BackColor = Color.FromArgb(74, 60, 96);
-            dataGridViewCellStyle6.ForeColor = Color.White;
-            colEstatus.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle13.BackColor = Color.FromArgb(74, 60, 96);
+            dataGridViewCellStyle13.ForeColor = Color.White;
+            colEstatus.DefaultCellStyle = dataGridViewCellStyle13;
             colEstatus.HeaderText = "Estatus";
             colEstatus.MinimumWidth = 8;
             colEstatus.Name = "colEstatus";
