@@ -13,6 +13,7 @@ namespace InvSis.Views
         public frmGestrionPermisos()
         {
             InitializeComponent();
+            _controller = new PermisosController();
             ActualizarListadoPermisos();
             dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
             dataGridView1.CellFormatting += dataGridView1_CellFormatting;
