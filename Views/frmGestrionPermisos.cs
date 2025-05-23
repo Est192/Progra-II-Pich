@@ -161,22 +161,37 @@ namespace InvSis.Views
 
         private void DataGridView1_SelectionChanged(object? sender, EventArgs e)
         {
-            if (dataGridView1.CurrentRow == null)
-                return;
-
-            permisoSeleccionado = dataGridView1.CurrentRow.DataBoundItem as Permiso;
-
-            if (permisoSeleccionado != null)
+            try
             {
-                txtNombrePermiso.Text = permisoSeleccionado.Nombre;
-                txtDescripcion.Text = permisoSeleccionado.Descripcion;
-                btnAgregar.Text = "Editar";
+                if (dataGridView1.CurrentRow == null)
+                    return;
+
+                // Verificar que CurrentRow tenga celdas y no esté vacío
+                if (dataGridView1.CurrentRow.Cells.Count == 0)
+                    return;
+
+                permisoSeleccionado = dataGridView1.CurrentRow.DataBoundItem as Permiso;
+
+                if (permisoSeleccionado != null)
+                {
+                    txtNombrePermiso.Text = permisoSeleccionado.Nombre;
+                    txtDescripcion.Text = permisoSeleccionado.Descripcion;
+                    btnAgregar.Text = "Editar";
+                }
+                else
+                {
+                    LimpiarCampos();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                // Opcional: loguear el error para diagnóstico
+                // Por ahora, simplemente evitar que la app se caiga
+                permisoSeleccionado = null;
                 LimpiarCampos();
             }
         }
+
 
 
         private void LimpiarCampos()

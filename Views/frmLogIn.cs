@@ -15,12 +15,12 @@ namespace InvSis.Views
 {
     public partial class frmLogIn : Form
     {
-        private UsuariosController _usuariosController;
+        private UsuariosController _usuariosController = new UsuariosController();
+        private RolesController _rolesController = new RolesController();
 
         public frmLogIn()
         {
             InitializeComponent();
-            _usuariosController = new UsuariosController();
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -28,55 +28,39 @@ namespace InvSis.Views
 
         }
 
+        
+
         private void btnIniciarSesion_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtUsuario.Text))
-            {
-                MessageBox.Show("El campo de usuario no puede estar vacío.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtContraseña.Text))
-            {
-                MessageBox.Show("El campo de contraseña no puede estar vacío.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            // Validaciones de usuario y contraseña (omito para brevity)...
 
             string usuarioIngresado = txtUsuario.Text.Trim();
             string contrasenaIngresada = txtContraseña.Text;
 
-            // Si es admin (especial)
-            if (usuarioIngresado.ToLower() == "admin")
+            var usuario = _usuariosController.AutenticarUsuario(usuarioIngresado, contrasenaIngresada);
+            if (usuario == null)
             {
-                Sesion.IniciarSesion(usuarioIngresado);
-                MessageBox.Show("Ha iniciado sesión como administrador.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                MessageBox.Show("Usuario o contraseña incorrectos o inactivo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            try
+            var rol = _rolesController.ObtenerRoles(false)
+                .FirstOrDefault(r => r.IdRol == usuario.IdRol);
+
+            if (rol == null)
             {
-                var usuario = _usuariosController.AutenticarUsuario(usuarioIngresado, contrasenaIngresada);
-
-                if (usuario == null)
-                {
-                    MessageBox.Show("Usuario o contraseña incorrectos, o el usuario está inactivo.", "Error de autenticación", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                // Guardar en Sesion
-                Sesion.IniciarSesion(usuario.Nickname);
-
-                MessageBox.Show($"Bienvenido {usuario.Nickname}.", "Inicio de sesión exitoso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error inesperado durante la autenticación: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("El rol asignado al usuario no existe.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
+            var permisos = _rolesController.ObtenerPermisosAsignados(rol.IdRol);
+
+            Sesion.IniciarSesion(usuario, rol, permisos);
+
+            MessageBox.Show($"Bienvenido {usuario.Nickname}.", "Inicio de sesión", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

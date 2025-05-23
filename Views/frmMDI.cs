@@ -62,14 +62,37 @@ namespace InvSis.Views
         // En el formulario principal, después de iniciar sesión:
         private void ConfigurarPermisosBotones()
         {
+            // Si es administrador, habilita todo
+            if (Sesion.EsAdministrador)
+            {
+                btnAdmUsr.Enabled = true;
+                btnGesRoles.Enabled = true;
+                btnRepAud.Enabled = true;
+                btnAPI.Enabled = true;
+                // habilita otros botones si es necesario
+                return;
+            }
 
-            // Botones solo para administradores
-            btnAdmUsr.Enabled = Sesion.EsAdministrador;
-            btnGesRoles.Enabled = Sesion.EsAdministrador;
-            btnRepAud.Enabled = Sesion.EsAdministrador;
-            btnAPI.Enabled = Sesion.EsAdministrador;
+            // Si no es admin, habilita botones según permisos
 
+            // Ejemplo: botón para administrar usuarios requiere permiso "Alta" o "Actualizacion"
+            btnAdmUsr.Enabled = TienePermiso("Alta") || TienePermiso("Actualizacion");
+
+            btnGesRoles.Enabled = TienePermiso("Actualizacion");
+
+            btnRepAud.Enabled = TienePermiso("Consulta");
+
+            btnAPI.Enabled = false; // Deshabilitado para todos excepto admin (ejemplo)
+
+            // Agrega condiciones para los demás botones según permisos
         }
+
+        // Método auxiliar para checar si el usuario tiene cierto permiso
+        private bool TienePermiso(string nombrePermiso)
+        {
+            return Sesion.PermisosActuales.Any(p => p.Descripcion.Equals(nombrePermiso, StringComparison.OrdinalIgnoreCase));
+        }
+
 
         private void OpenFormInPanel(string formName)
         {
