@@ -72,12 +72,18 @@ namespace InvSis.Views
             {
                 MessageBox.Show("Debe seleccionar un producto de la tabla para enviar la información.",
                     "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            } else
+            }
+            else
             {
                 // Validar que el Stock del producto sea mayor a 0
                 // Validar que el producto no esté en estado de baja
                 // Llamar al método de envío de información
             }
+
+        }
+
+        private void btnResumen_Click(object sender, EventArgs e)
+        {
 
         }
     }
