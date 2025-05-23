@@ -1,5 +1,5 @@
-﻿using InvSis.Controllers;
-using InvSis.Model;
+﻿using InventariosCore.Controllers;
+using InventariosCore.Model;
 using System;
 using System.Windows.Forms;
 
@@ -13,7 +13,6 @@ namespace InvSis.Views
         public frmGestrionPermisos()
         {
             InitializeComponent();
-            _controller = new PermisosController(this);
             ActualizarListadoPermisos();
             dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
             dataGridView1.CellFormatting += dataGridView1_CellFormatting;

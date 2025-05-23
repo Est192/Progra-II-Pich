@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using InvSis.Business;
-using InvSis.Model;
+using InventariosCore.Business;
+using InventariosCore.Model;
+using InventariosCore.Controllers;
 
 namespace InvSis
 {

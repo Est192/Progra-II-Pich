@@ -1,5 +1,5 @@
-﻿using InvSis.Controllers;
-using InvSis.Model;
+﻿using InventariosCore.Controllers;
+using InventariosCore.Model;
 using System;
 using System.Windows.Forms;
 

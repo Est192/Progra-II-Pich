@@ -1,4 +1,5 @@
-﻿using InvSis.Business;
+﻿using InventariosCore.Business;
+using InventariosCore.Controllers;
 using System;
 using System.Windows.Forms;
 

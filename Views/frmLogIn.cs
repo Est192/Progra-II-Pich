@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using InvSis.Business;
+using InventariosCore.Business;
 using InvSis.Views;
 
 namespace InvSis.Views

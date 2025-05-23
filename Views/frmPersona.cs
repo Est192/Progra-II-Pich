@@ -1,5 +1,5 @@
-﻿using InvSis.Data;
-using InvSis.Model;
+﻿using InventariosCore.Data;
+using InventariosCore.Model;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;

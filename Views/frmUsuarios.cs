@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using InvSis.Controllers;
-using InvSis.Model;
+using InventariosCore.Controllers;
+using InventariosCore.Model;
 
 namespace InvSis.Views
 {

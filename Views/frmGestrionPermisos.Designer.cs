@@ -1,4 +1,4 @@
-﻿
+﻿using InventariosCore.Controllers;
 
 namespace InvSis.Views
 {
@@ -116,7 +116,7 @@ namespace InvSis.Views
             // 
             // permisosControllerBindingSource
             // 
-            permisosControllerBindingSource.DataSource = typeof(Controllers.PermisosController);
+            permisosControllerBindingSource.DataSource = typeof(PermisosController);
             // 
             // btnInhabilitar
             // 
